@@ -1,0 +1,99 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Individual {
+  id          String         @id @default(uuid())
+  email       String         @unique
+  password    String
+  name        String
+  address     String
+  phone       String
+  age         Int
+  description String?
+  social      String?
+  saved       ListSaved?     @relation("IndividualOnSaved")
+  history     Registration[] @relation("IndividualOnHistory")
+  createdAt   DateTime       @default(now())
+  role        Role           @default(INDIVIDUAL)
+}
+
+model Job {
+  id             String         @id @default(uuid())
+  title          String
+  description    String
+  jobStatus      JobStatus      @default(OPEN)
+  registrant     Registration[] @relation("JobOnHistory")
+  listSaved      ListSaved[]
+  organizationId String
+  organization   Organization   @relation(name: "OrganizationOnJob", fields: [organizationId], references: [id])
+  createdAt      DateTime       @default(now())
+}
+
+model Organization {
+  id          String   @id @default(uuid())
+  email       String   @unique
+  password    String
+  name        String
+  address     String
+  phone       String
+  leader      String
+  description String?
+  social      String?
+  job         Job[]    @relation("OrganizationOnJob")
+  role        Role     @default(ORGANIZATION)
+  createdAt   DateTime @default(now())
+}
+
+// Relation
+
+model Registration {
+  individualId       String
+  individual         Individual         @relation(name: "IndividualOnHistory", fields: [individualId], references: [id])
+  jobId              String
+  job                Job                @relation(name: "JobOnHistory", fields: [jobId], references: [id])
+  registrationStatus RegistrationStatus
+  registeredAt       DateTime           @default(now()) @ignore
+
+  @@id([individualId, jobId])
+}
+
+model ListSaved {
+  id           String     @id @default(uuid())
+  individualId String     @unique
+  individual   Individual @relation(name: "IndividualOnSaved", fields: [individualId], references: [id])
+  jobs         Job[]
+}
+
+// model SavedJob {
+//   listSavedId String
+//   listSaved   ListSaved @relation(name: "ListOnSavedJob", fields: [listSavedId], references: [id])
+//   jobId       String
+//   job         Job       @relation(name: "JobOnSavedJob", fields: [jobId], references: [id])
+//
+//   @@id([listSavedId, jobId])
+// }
+
+enum RegistrationStatus {
+  ONPROCESS
+  REJECTED
+  ACCEPTED
+}
+
+enum JobStatus {
+  OPEN
+  CLOSE
+}
+
+enum Role {
+  INDIVIDUAL
+  ORGANIZATION
+}

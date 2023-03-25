@@ -1,0 +1,55 @@
+{
+  "name": "foundlunteer",
+  "version": "1.0.0",
+  "description": "Search for Volunteer App Service",
+  "main": "./src/www.ts",
+  "scripts": {
+    "dev": "npx nodemon ./src/www.ts"
+  },
+  "type": "module",
+  "keywords": [
+    "Volunteer",
+    "Backend",
+    "Web",
+    "Service"
+  ],
+  "author": "SeeN",
+  "license": "ISC",
+  "dependencies": {
+    "@prisma/client": "^4.11.0",
+    "bcrypt": "^5.1.0",
+    "dotenv": "^16.0.3",
+    "express": "^4.18.2",
+    "http-errors": "^2.0.0",
+    "joi": "^17.8.4",
+    "jsonwebtoken": "^9.0.0",
+    "morgan": "^1.10.0",
+    "passport": "^0.6.0",
+    "passport-jwt": "^4.0.1",
+    "reflect-metadata": "^0.1.13",
+    "typedi": "^0.10.0"
+  },
+  "devDependencies": {
+    "@types/bcrypt": "^5.0.0",
+    "@types/eslint": "^8.21.2",
+    "@types/express": "^4.17.17",
+    "@types/http-errors": "^2.0.1",
+    "@types/jsonwebtoken": "^9.0.1",
+    "@types/morgan": "^1.9.4",
+    "@types/node": "^18.15.3",
+    "@types/nodemon": "^1.19.2",
+    "@types/passport": "^1.0.12",
+    "@types/passport-jwt": "^3.0.8",
+    "@typescript-eslint/eslint-plugin": "^5.55.0",
+    "@typescript-eslint/parser": "^5.55.0",
+    "eslint": "^8.36.0",
+    "eslint-config-standard-with-typescript": "^34.0.1",
+    "eslint-plugin-import": "^2.27.5",
+    "eslint-plugin-n": "^15.6.1",
+    "eslint-plugin-promise": "^6.1.1",
+    "nodemon": "^2.0.21",
+    "prisma": "^4.11.0",
+    "ts-node": "^10.9.1",
+    "typescript": "^5.0.2"
+  }
+}

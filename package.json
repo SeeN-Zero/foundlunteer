@@ -4,6 +4,7 @@
   "description": "Search for Volunteer App Service",
   "main": "./src/www.ts",
   "scripts": {
+    "start": "ts-node src/www.ts",
     "dev": "npx nodemon ./src/www.ts"
   },
   "type": "module",

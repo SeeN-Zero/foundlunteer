@@ -36,6 +36,9 @@ passport.use(new JwtStrategy(opts, (jwtPayload, done): void => {
 }))
 
 // Routes
+app.get('/', (req: Request, res: Response) => {
+  res.json({ message: 'Hello Foundlunteer!' })
+})
 app.use('/individual', individualRoute)
 app.use('/organization', organizationRoute)
 app.use('/job', jobRoute)

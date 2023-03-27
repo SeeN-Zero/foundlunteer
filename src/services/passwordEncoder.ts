@@ -9,7 +9,7 @@ class PasswordEncoder {
   async compare (password: string, passwordHash: string): Promise<boolean> {
     const result: boolean = await bcrypt.compare(password, passwordHash)
     if (!result) {
-      throw createHttpError(404, 'Incorrect Email Or Password')
+      throw createHttpError(401, 'Incorrect Email Or Password')
     } else {
       return result
     }

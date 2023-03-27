@@ -61,7 +61,7 @@ class IndividualService {
             throw error
           }
         })
-      return 'deleted'
+      return 'Deleted'
     }
   }
 

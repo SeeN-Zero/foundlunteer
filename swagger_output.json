@@ -3,14 +3,16 @@
   "info": {
     "version": "1.0.0",
     "title": "FOUNDLUNTEER API",
-    "description": "API for Foundlunteer Android App"
+    "description": "API for Foundlunteer Android App \n [Show List For Individual On Progress]"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
   "tags": [
     {
-      "name": "Individual",
-      "description": "describe the individual as a person"
+      "name": "Individual"
+    },
+    {
+      "name": "Organization"
     }
   ],
   "consumes": ["application/json"],
@@ -19,7 +21,7 @@
   "securityDefinitions": {
     "bearerAuth": {
       "type": "apiKey",
-      "name": "jwt",
+      "name": "Authorization",
       "in": "header",
       "description": "Enter the token with the Bearer: bearer [token]"
     }
@@ -29,7 +31,8 @@
       "post": {
         "tags": ["Individual"],
         "summary": "Add Individual",
-        "description": "",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
         "parameters": [{
           "in": "body",
           "name": "Individual",
@@ -66,11 +69,237 @@
             }
           }
         }],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
         "responses": {
           "200": {
             "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+      }
+      }
+    },
+    "/individual/login": {
+      "post": {
+        "tags": ["Individual"],
+        "summary": "Login For Individual",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "Individual",
+          "description": "Login For Individual",
+          "schema": {
+            "type": "object",
+            "required": [
+              "email",
+              "password"
+            ],
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individual/get": {
+      "get": {
+        "tags": ["Individual"],
+        "summary": "Get Individual Profile",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individual/update": {
+      "post": {
+        "tags": ["Individual"],
+        "summary": "Update For Individual",
+        "description": "All body request optional",
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "Individual",
+          "description": "Add New Individual",
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "description": {
+                "type": "string"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individual/saveordeletejob": {
+      "post": {
+        "tags": ["Individual"],
+        "summary": "Add or Remove Job Form Individual Job Save List",
+        "description": "when the individual wants to save (bookmark) a job based on the job id, the response will be \"saved\", when the individual hits again for the job that has been saved, the job will be deleted from the list and the response will be \"Deleted\"",
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "Individual",
+          "description": "Add New Individual",
+          "schema": {
+            "type": "object",
+            "required": [
+              "id"
+            ],
+            "properties": {
+              "id": {
+                "type": "string"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
             "schema": {
               "type": "object",
               "properties": {

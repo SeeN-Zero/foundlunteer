@@ -1,0 +1,87 @@
+{
+  "swagger": "2.0",
+  "info": {
+    "version": "1.0.0",
+    "title": "FOUNDLUNTEER API",
+    "description": "API for Foundlunteer Android App"
+  },
+  "host": "aws.senna-annaba.my.id",
+  "basePath": "/",
+  "tags": [
+    {
+      "name": "Individual",
+      "description": "describe the individual as a person"
+    }
+  ],
+  "consumes": ["application/json"],
+  "produces": ["application/json"],
+  "schemes": ["https"],
+  "securityDefinitions": {
+    "bearerAuth": {
+      "type": "apiKey",
+      "name": "jwt",
+      "in": "header",
+      "description": "Enter the token with the Bearer: bearer [token]"
+    }
+  },
+  "paths": {
+    "/individual/add": {
+      "post": {
+        "tags": ["Individual"],
+        "summary": "Add Individual",
+        "description": "",
+        "parameters": [{
+          "in": "body",
+          "name": "Individual",
+          "description": "Add New Individual",
+          "schema": {
+            "type": "object",
+            "required": [
+              "email",
+              "password",
+              "name",
+              "address",
+              "phone",
+              "age"
+            ],
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "age": {
+                "type": "integer"
+              }
+            }
+          }
+        }],
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

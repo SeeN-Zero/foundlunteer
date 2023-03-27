@@ -10,6 +10,9 @@ import logger from 'morgan'
 import passport from 'passport'
 import { Strategy as JwtStrategy, ExtractJwt } from 'passport-jwt'
 import createHttpError from 'http-errors'
+import cors from 'cors'
+import swaggerUi from 'swagger-ui-express'
+import swaggerDocument from '../swagger_output.json' assert { type: 'json' }
 
 // Routes
 import individualRoute from './routes/individualRoute'
@@ -20,9 +23,11 @@ dotenv.config()
 
 const app = express()
 
+app.use(cors())
 app.use(logger('combined'))
 app.use(express.json())
 app.use(express.urlencoded({ extended: false }))
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),

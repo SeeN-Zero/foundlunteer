@@ -69,8 +69,7 @@ router.delete('/delete',
       })
   },
   (req: Request, res: Response, next: NextFunction) => {
-    const { id } = req.body
-    jobController.deleteJob(id, req.user)
+    jobController.deleteJob(req.body, req.user)
       .then(async () => {
         res.status(200).json({ message: 'success' })
       })

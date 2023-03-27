@@ -72,11 +72,11 @@ class JobController {
     }
   }
 
-  async deleteJob (jobId: string, payload: any): Promise<void> {
+  async deleteJob (body: { id: string }, payload: any): Promise<void> {
     try {
       const { id: organizationId, role }: { id: string, role: Role } = payload
       await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.deleteJob(jobId, organizationId)
+      await this.jobService.deleteJob(body.id, organizationId)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

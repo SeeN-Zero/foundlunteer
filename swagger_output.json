@@ -1,13 +1,17 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.0.0",
+    "version": "1.1.0",
     "title": "FOUNDLUNTEER API",
-    "description": "API for Foundlunteer Android App \n [Show List For Individual On Progress]"
+    "description": "API for Foundlunteer Android App\n\nv1.1.0\n-Add Show saved job for individual\n-Create universal Add, Login, And Get For User"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
   "tags": [
+    {
+      "name": "User",
+      "description": "For Organization or Individual"
+    },
     {
       "name": "Individual"
     },
@@ -31,8 +35,158 @@
     }
   },
   "paths": {
+    "/user/add": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Add User",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "User",
+          "description": "Add New User",
+          "schema": {
+            "type": "object",
+            "required": [
+              "email",
+              "password",
+              "name",
+              "address",
+              "phone",
+              "role"
+            ],
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              },
+              "name": {
+                "type": "string"
+              },
+              "address": {
+                "type": "string"
+              },
+              "phone": {
+                "type": "string"
+              },
+              "role": {
+                "type": "integer"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/login": {
+      "post": {
+        "tags": ["User"],
+        "summary": "Login For User",
+        "consumes": ["application/json"],
+        "produces": ["application/json"],
+        "parameters": [{
+          "in": "body",
+          "name": "User",
+          "description": "Login For User",
+          "schema": {
+            "type": "object",
+            "required": [
+              "email",
+              "password"
+            ],
+            "properties": {
+              "email": {
+                "type": "string"
+              },
+              "password": {
+                "type": "string"
+              }
+            }
+          }
+        }],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "token": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/user/get": {
+      "get": {
+        "tags": ["User"],
+        "summary": "Get User Profile",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/individual/add": {
       "post": {
+        "deprecated": true,
         "tags": ["Individual"],
         "summary": "Add Individual",
         "consumes": ["application/json"],
@@ -101,6 +255,7 @@
     },
     "/individual/login": {
       "post": {
+        "deprecated": true,
         "tags": ["Individual"],
         "summary": "Login For Individual",
         "consumes": ["application/json"],
@@ -153,6 +308,7 @@
     },
     "/individual/get": {
       "get": {
+        "deprecated": true,
         "tags": ["Individual"],
         "summary": "Get Individual Profile",
         "produces": ["application/json"],
@@ -319,8 +475,38 @@
         }
       }
     },
+    "/individual/savedjob": {
+      "get": {
+        "tags": ["Individual"],
+        "summary": "Get Individual Saved Job",
+        "produces": ["application/json"],
+        "security": [
+          {
+            "bearerAuth":[]
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/organization/add": {
       "post": {
+        "deprecated": true,
         "tags": ["Organization"],
         "summary": "Add Organization",
         "consumes": ["application/json"],
@@ -389,6 +575,7 @@
     },
     "/organization/login": {
       "post": {
+        "deprecated": true,
         "tags": ["Organization"],
         "summary": "Login For Organization",
         "consumes": ["application/json"],
@@ -441,6 +628,7 @@
     },
     "/organization/get": {
       "get": {
+        "deprecated": true,
         "tags": ["Organization"],
         "summary": "Get Organization Profile",
         "produces": ["application/json"],

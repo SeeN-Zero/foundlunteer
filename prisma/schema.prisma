@@ -17,7 +17,7 @@ model Individual {
   name        String
   address     String
   phone       String
-  age         Int
+  age         Int?
   description String?
   social      String?
   saved       ListSaved?     @relation("IndividualOnSaved")
@@ -45,7 +45,7 @@ model Organization {
   name        String
   address     String
   phone       String
-  leader      String
+  leader      String?
   description String?
   social      String?
   job         Job[]    @relation("OrganizationOnJob")

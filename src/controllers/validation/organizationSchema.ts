@@ -7,7 +7,6 @@ const addOrganizationSchema = Joi.object({
   address: Joi.string().min(10).max(100).required(),
   phone: Joi.string().min(10).max(12).required(),
   leader: Joi.string().min(3).max(32).required()
-
 })
 
 const loginOrganizationSchema = Joi.object({

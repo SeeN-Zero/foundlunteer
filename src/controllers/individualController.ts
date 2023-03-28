@@ -6,12 +6,12 @@ import {
   saveJobIndividualSchema,
   updateIndividualSchema
 } from './validation/individualSchema'
-import CommonService from '../services/commonService'
+import UserService from '../services/userService'
 import IndividualService from '../services/individualService'
 
 class individualController {
   individualService = new IndividualService()
-  commonService = new CommonService()
+  userService = new UserService()
 
   async validateIndividual (individual: Individual): Promise<void> {
     try {
@@ -47,7 +47,7 @@ class individualController {
 
   async addIndividual (individual: Individual): Promise<void> {
     try {
-      await this.commonService.checkEmailAvailability(individual.email)
+      await this.userService.checkEmailAvailability(individual.email)
       await this.individualService.addIndividual(individual)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
@@ -103,11 +103,25 @@ class individualController {
     }
   }
 
-  async saveJob (jobId: string, payload: any): Promise<string> {
+  async saveOrDeleteJob (jobId: string, payload: any): Promise<string> {
     try {
       const { id: individualId, role }: { id: string, role: Role } = payload
       await this.individualService.isIndividualValidation(role)
       return await this.individualService.saveOrDeleteJob(individualId, jobId)
+    } catch (error: any) {
+      if (error.status === null || error.status === undefined) {
+        throw createHttpError(500, error.message)
+      } else {
+        throw error
+      }
+    }
+  }
+
+  async getIndividualSavedJob (payload: any): Promise<any> {
+    try {
+      const { id: individualId, role }: { id: string, role: Role } = payload
+      await this.individualService.isIndividualValidation(role)
+      return await this.individualService.getIndividualSavedJob(individualId)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

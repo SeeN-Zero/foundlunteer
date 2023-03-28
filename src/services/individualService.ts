@@ -66,10 +66,12 @@ class IndividualService {
   }
 
   async getIndividualSavedJob (individualId: string): Promise<any> {
-    await this.individualRepository.getIndividualSavedJob(individualId)
+    const result = await this.individualRepository.getIndividualSavedJob(individualId)
       .catch((e) => {
         throw e
       })
+    const { jobs } = result
+    return { job: jobs }
   }
 }
 

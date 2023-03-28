@@ -94,22 +94,24 @@ class IndividualRepository {
   }
 
   async getIndividualSavedJob (individualId: string): Promise<any> {
-    return this.prisma.individual.findUniqueOrThrow({
+    return this.prisma.listSaved.findUniqueOrThrow({
       where: {
-        id: individualId
+        individualId
       },
-      select: {
-        id: true,
-        email: true,
-        name: true,
-        address: true,
-        phone: true,
-        age: true,
-        description: true,
-        social: true,
-        saved: {
+      include: {
+        jobs: {
           include: {
-            jobs: true
+            organization: {
+              select: {
+                name: true,
+                email: true,
+                address: true,
+                phone: true,
+                leader: true,
+                description: true,
+                social: true
+              }
+            }
           }
         }
       }

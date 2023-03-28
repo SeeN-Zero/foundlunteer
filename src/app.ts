@@ -18,6 +18,7 @@ import swaggerDocument from '../swagger_output.json' assert { type: 'json' }
 import individualRoute from './routes/individualRoute'
 import organizationRoute from './routes/organizationRoute'
 import jobRoute from './routes/jobRoute'
+import userRoute from './routes/userRoute'
 
 dotenv.config()
 
@@ -35,6 +36,7 @@ const opts = {
   algorithms: ['HS256']
 
 }
+
 passport.use(new JwtStrategy(opts, (jwtPayload, done): void => {
   const { id, role } = jwtPayload
   done(null, { id, role })
@@ -44,6 +46,8 @@ passport.use(new JwtStrategy(opts, (jwtPayload, done): void => {
 app.get('/', (req: Request, res: Response) => {
   res.json({ message: 'Hello Foundlunteer!' })
 })
+
+app.use('/user', userRoute)
 app.use('/individual', individualRoute)
 app.use('/organization', organizationRoute)
 app.use('/job', jobRoute)

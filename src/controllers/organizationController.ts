@@ -2,12 +2,12 @@ import { type Organization, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import { addOrganizationSchema, loginOrganizationSchema, updateOrganizationSchema } from './validation/organizationSchema'
 
-import CommonService from '../services/commonService'
+import UserService from '../services/userService'
 import OrganizationService from '../services/organizationService'
 
 class OrganizationController {
   organizationService = new OrganizationService()
-  commonService = new CommonService()
+  userService = new UserService()
 
   async validateOrganization (organization: Organization): Promise<void> {
     try {
@@ -35,7 +35,7 @@ class OrganizationController {
 
   async addOrganization (organization: Organization): Promise<void> {
     try {
-      await this.commonService.checkEmailAvailability(organization.email)
+      await this.userService.checkEmailAvailability(organization.email)
       await this.organizationService.addOrganization(organization)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {

@@ -1,6 +1,6 @@
 {
   "name": "foundlunteer",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Search for Volunteer App Service",
   "main": "./src/www.ts",
   "scripts": {
@@ -26,6 +26,7 @@
     "joi": "^17.8.4",
     "jsonwebtoken": "^9.0.0",
     "morgan": "^1.10.0",
+    "multer": "^1.4.5-lts.1",
     "passport": "^0.6.0",
     "passport-jwt": "^4.0.1",
     "reflect-metadata": "^0.1.13",
@@ -40,6 +41,7 @@
     "@types/http-errors": "^2.0.1",
     "@types/jsonwebtoken": "^9.0.1",
     "@types/morgan": "^1.9.4",
+    "@types/multer": "^1.4.7",
     "@types/node": "^18.15.3",
     "@types/nodemon": "^1.19.2",
     "@types/passport": "^1.0.12",

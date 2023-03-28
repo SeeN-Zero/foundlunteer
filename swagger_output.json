@@ -72,7 +72,7 @@
                 "type": "string"
               },
               "role": {
-                "type": "integer"
+                "type": "string"
               }
             }
           }

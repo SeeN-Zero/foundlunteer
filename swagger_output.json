@@ -184,7 +184,7 @@
         }
       }
     },
-    "/job/getalljob": {
+    "/job/getall": {
       "get": {
         "tags": ["User"],
         "summary": "Get All Job",

@@ -23,4 +23,8 @@ const updateOrganizationSchema = Joi.object({
   // social: Joi.string().required()
 })
 
-export { addOrganizationSchema, loginOrganizationSchema, updateOrganizationSchema }
+const getJobDetailSchema = Joi.object({
+  id: Joi.string().required()
+})
+
+export { addOrganizationSchema, loginOrganizationSchema, updateOrganizationSchema, getJobDetailSchema }

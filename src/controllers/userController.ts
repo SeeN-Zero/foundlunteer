@@ -4,6 +4,8 @@ import IndividualService from '../services/individualService'
 import UserService from '../services/userService'
 import OrganizationService from '../services/organizationService'
 import { addUserSchema, loginUserSchema } from './validation/userSchema'
+import { fileURLToPath } from 'url'
+import path, { dirname } from 'path'
 
 class UserController {
   individualService = new IndividualService()
@@ -69,6 +71,13 @@ class UserController {
         throw error
       }
     }
+  }
+
+  async getUserImage (payload: any): Promise<string> {
+    const { id }: { id: string } = payload
+    const filename = fileURLToPath(import.meta.url)
+    const _dirname = dirname(filename)
+    return path.join(_dirname, '../image', id + '.png')
   }
 }
 

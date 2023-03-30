@@ -1,6 +1,11 @@
 import { type Organization, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { addOrganizationSchema, loginOrganizationSchema, updateOrganizationSchema } from './validation/organizationSchema'
+import {
+  addOrganizationSchema,
+  getJobDetailSchema,
+  loginOrganizationSchema,
+  updateOrganizationSchema
+} from './validation/organizationSchema'
 
 import UserService from '../services/userService'
 import OrganizationService from '../services/organizationService'
@@ -28,6 +33,14 @@ class OrganizationController {
   async validateUpdate (body: { id: string }): Promise<void> {
     try {
       await updateOrganizationSchema.validateAsync(body)
+    } catch (error: any) {
+      throw createHttpError(400, error.message)
+    }
+  }
+
+  async validateGetJobDetail (body: { id: string }): Promise<void> {
+    try {
+      await getJobDetailSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
     }
@@ -96,6 +109,21 @@ class OrganizationController {
       await this.organizationService.isOrganizationValidation(role)
       organization.id = organizationId
       await this.organizationService.updateOrganization(organization)
+    } catch (error: any) {
+      if (error.status === null || error.status === undefined) {
+        throw createHttpError(500, error.message)
+      } else {
+        throw error
+      }
+    }
+  }
+
+  async getJobDetail (jobId: string, payload: any): Promise<any> {
+    try {
+      const { id: organizationId, role }: { id: string, role: Role } = payload
+      await this.organizationService.isOrganizationValidation(role)
+      const detail = await this.organizationService.getJobDetail(organizationId, jobId)
+      return detail[0]
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

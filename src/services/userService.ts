@@ -43,11 +43,15 @@ class UserService {
     }
   }
 
-  async getUser (id: string, role: Role): Promise<Individual> {
+  async getUser (id: string, role: Role): Promise<any> {
     if (role === Role.INDIVIDUAL) {
-      return await this.individualRepository.getIndividualById(id)
+      const individual = await this.individualRepository.getIndividualById(id)
+      const { registered, ...result } = individual
+      return result
     } else {
-      return await this.organizationRepository.getOrganizationById(id)
+      const organization = await this.organizationRepository.getOrganizationById(id)
+      const { job, ...result } = organization
+      return result
     }
   }
 }

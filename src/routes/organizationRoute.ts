@@ -90,4 +90,25 @@ router.post('/update',
       })
   })
 
+router.post('/jobdetail',
+  passport.authenticate('jwt', { session: false }),
+  (req: Request, res: Response, next: NextFunction) => {
+    organizationController.validateGetJobDetail(req.body)
+      .then(async () => {
+        next()
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  },
+  (req: Request, res: Response, next: NextFunction) => {
+    organizationController.getJobDetail(req.body.id, req.user)
+      .then(async (result) => {
+        res.status(200).json(result)
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  })
+
 export default router

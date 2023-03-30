@@ -21,7 +21,7 @@ model Individual {
   description String?
   social      String?
   saved       ListSaved?     @relation("IndividualOnSaved")
-  history     Registration[] @relation("IndividualOnHistory")
+  registered  Registration[] @relation("IndividualOnRegistration")
   createdAt   DateTime       @default(now())
   role        Role           @default(INDIVIDUAL)
 }
@@ -31,7 +31,7 @@ model Job {
   title          String
   description    String
   jobStatus      JobStatus      @default(OPEN)
-  registrant     Registration[] @relation("JobOnHistory")
+  registrant     Registration[] @relation("JobOnRegistration")
   listSaved      ListSaved[]
   organizationId String
   organization   Organization   @relation(name: "OrganizationOnJob", fields: [organizationId], references: [id])
@@ -54,14 +54,13 @@ model Organization {
 }
 
 // Relation
-
 model Registration {
   individualId       String
-  individual         Individual         @relation(name: "IndividualOnHistory", fields: [individualId], references: [id])
+  individual         Individual         @relation(name: "IndividualOnRegistration", fields: [individualId], references: [id])
   jobId              String
-  job                Job                @relation(name: "JobOnHistory", fields: [jobId], references: [id])
+  job                Job                @relation(name: "JobOnRegistration", fields: [jobId], references: [id])
   registrationStatus RegistrationStatus
-  registeredAt       DateTime           @default(now()) @ignore
+  registeredAt       DateTime           @default(now())
 
   @@id([individualId, jobId])
 }

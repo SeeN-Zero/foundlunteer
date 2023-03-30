@@ -22,8 +22,12 @@ const updateIndividualSchema = Joi.object(({
   address: Joi.string().min(10).max(100),
   phone: Joi.string().min(10).max(12),
   age: Joi.number().min(12).max(100),
-  description: Joi.string()
-  // social: Joi.string().required()
+  description: Joi.string(),
+  social: Joi.string().required()
 }))
 
-export { addIndividualSchema, loginIndividualSchema, updateIndividualSchema, saveJobIndividualSchema }
+const registerIndividualJobSchema = Joi.object({
+  id: Joi.string().required()
+})
+
+export { addIndividualSchema, registerIndividualJobSchema, loginIndividualSchema, updateIndividualSchema, saveJobIndividualSchema }

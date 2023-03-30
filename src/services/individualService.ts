@@ -7,6 +7,7 @@ class IndividualService {
   individualRepository = new IndividualRepository()
   passwordEncoder = new PasswordEncoder()
   jwt = new Jwt()
+
   async isIndividualValidation (role: string): Promise<void> {
     if (role !== Role.INDIVIDUAL) {
       throw createHttpError(403, 'No Privilege')
@@ -14,7 +15,17 @@ class IndividualService {
   }
 
   async getIndividualById (id: string): Promise<Individual> {
-    return await this.individualRepository.getIndividualById(id)
+    const individual = await this.individualRepository.getIndividualById(id)
+    const { registered, ...result } = individual
+    return result
+  }
+
+  async getIndividualRegisteredJob (id: string): Promise<any> {
+    const individual = await this.individualRepository.getIndividualById(id)
+    const { registered } = individual
+    return {
+      registered
+    }
   }
 
   async getIndividualByEmail (email: string): Promise<Individual> {
@@ -72,6 +83,25 @@ class IndividualService {
       })
     const { jobs } = result
     return { job: jobs }
+  }
+
+  async registerIndividualToJob (individualId: string, jobId: string): Promise<void> {
+    const individual = await this.individualRepository.getIndividualById(individualId)
+    const notNull = Object.values(individual).every((property) => {
+      return property !== null
+    })
+    if (notNull) {
+      await this.individualRepository.registerIndividualJob(individualId, jobId)
+        .catch((e) => {
+          if (e.code === 'P2002') {
+            throw createHttpError(400, 'Already registered')
+          } else {
+            throw e
+          }
+        })
+    } else {
+      throw createHttpError(400, 'Individual data must be complete before registering')
+    }
   }
 }
 

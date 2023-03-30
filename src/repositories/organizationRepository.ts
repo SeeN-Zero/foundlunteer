@@ -38,6 +38,7 @@ class OrganizationRepository {
           select: {
             id: true,
             title: true,
+            description: true,
             jobStatus: true,
             createdAt: true
           }
@@ -52,6 +53,44 @@ class OrganizationRepository {
         id: organization.id
       },
       data: organization
+    })
+  }
+
+  async getJobDetail (organizationId: string, jobId: string): Promise<any> {
+    return this.prisma.job.findMany({
+      where: {
+        AND: [
+          {
+            id: {
+              equals: jobId
+            }
+          },
+          {
+            organizationId: {
+              equals: organizationId
+            }
+          }
+        ]
+      },
+      include: {
+        registrant: {
+          select: {
+            registrationStatus: true,
+            individual: {
+              select: {
+                id: true,
+                email: true,
+                name: true,
+                address: true,
+                phone: true,
+                age: true,
+                description: true,
+                social: true
+              }
+            }
+          }
+        }
+      }
     })
   }
 }

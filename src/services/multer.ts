@@ -1,5 +1,4 @@
 import multer from 'multer'
-import path from 'path'
 import createHttpError from 'http-errors'
 
 const storage = multer.diskStorage({
@@ -8,7 +7,7 @@ const storage = multer.diskStorage({
   },
   filename: function (req: any, file: any, cb: any) {
     const { id }: { id: string } = req.user
-    cb(null, id + path.extname(file.originalname))
+    cb(null, id + '.png')
   }
 })
 

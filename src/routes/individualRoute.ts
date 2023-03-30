@@ -1,7 +1,6 @@
 import express, { type NextFunction, type Request, type Response } from 'express'
 import passport from 'passport'
 import IndividualController from '../controllers/individualController'
-import { upload } from '../services/multer'
 const router = express.Router()
 
 const individualController = new IndividualController()
@@ -110,16 +109,37 @@ router.get('/savedjob',
       })
   })
 
-router.post('/image',
+router.get('/registeredjob',
   passport.authenticate('jwt', { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
-    upload(req, res, function (error) {
-      if (error !== undefined) {
-        console.log(error.message)
+    individualController.getIndividualRegisteredJob(req.user)
+      .then(async (result) => {
+        res.status(200).json(result)
+      })
+      .catch(async (error) => {
         next(error)
-      }
-      res.status(200).json({ message: 'success' })
-    })
-  }
-)
+      })
+  })
+
+router.post('/register',
+  passport.authenticate('jwt', { session: false }),
+  (req: Request, res: Response, next: NextFunction) => {
+    individualController.validateRegisterIndividualJob(req.body)
+      .then(async () => {
+        next()
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  },
+  (req: Request, res: Response, next: NextFunction) => {
+    individualController.registerIndividualJob(req.user, req.body.id)
+      .then(async () => {
+        res.status(200).json({ message: 'success' })
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  })
+
 export default router

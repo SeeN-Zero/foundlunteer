@@ -1,4 +1,4 @@
-import { type Individual, PrismaClient } from '@prisma/client'
+import { type Individual, PrismaClient, RegistrationStatus } from '@prisma/client'
 
 class IndividualRepository {
   prisma = new PrismaClient()
@@ -37,7 +37,28 @@ class IndividualRepository {
         phone: true,
         age: true,
         description: true,
-        social: true
+        social: true,
+        registered: {
+          select: {
+            registrationStatus: true,
+            job: {
+              include: {
+                organization: {
+                  select: {
+                    id: true,
+                    email: true,
+                    name: true,
+                    address: true,
+                    phone: true,
+                    leader: true,
+                    description: true,
+                    social: true
+                  }
+                }
+              }
+            }
+          }
+        }
       }
     })
   }
@@ -110,6 +131,24 @@ class IndividualRepository {
                 leader: true,
                 description: true,
                 social: true
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+
+  async registerIndividualJob (individualId: string, jobId: string): Promise<void> {
+    await this.prisma.individual.update({
+      where: { id: individualId },
+      data: {
+        registered: {
+          create: {
+            registrationStatus: RegistrationStatus.ONPROCESS,
+            job: {
+              connect: {
+                id: jobId
               }
             }
           }

@@ -51,6 +51,10 @@ class OrganizationService {
   async updateOrganization (organization: Organization): Promise<void> {
     await this.organizationRepository.updateOrganization(organization)
   }
+
+  async getJobDetail (organizationId: string, jobId: string): Promise<any> {
+    return await this.organizationRepository.getJobDetail(organizationId, jobId)
+  }
 }
 
 export default OrganizationService

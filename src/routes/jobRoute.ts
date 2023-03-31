@@ -27,7 +27,7 @@ router.post('/add',
   })
 
 router.get('/getAll', passport.authenticate('jwt', { session: false }), (req: Request, res: Response, next: NextFunction) => {
-  jobController.getAllJob()
+  jobController.getAllJob(req.query)
     .then(async (result) => {
       res.status(200).json(result)
     })
@@ -36,7 +36,7 @@ router.get('/getAll', passport.authenticate('jwt', { session: false }), (req: Re
     })
 })
 
-router.post('/update',
+router.post('/update/:jobId',
   passport.authenticate('jwt', { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
     jobController.validateUpdate(req.body)
@@ -48,7 +48,7 @@ router.post('/update',
       })
   },
   (req: Request, res: Response, next: NextFunction) => {
-    jobController.updateJob(req.body, req.user)
+    jobController.updateJob(req.params.jobId, req.body, req.user)
       .then(async () => {
         res.status(200).json({ message: 'success' })
       })
@@ -57,19 +57,10 @@ router.post('/update',
       })
   })
 
-router.delete('/delete',
+router.post('/delete/:jobId',
   passport.authenticate('jwt', { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
-    jobController.validateDelete(req.body)
-      .then(async () => {
-        next()
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  },
-  (req: Request, res: Response, next: NextFunction) => {
-    jobController.deleteJob(req.body, req.user)
+    jobController.deleteJob(req.params.jobId, req.user)
       .then(async () => {
         res.status(200).json({ message: 'success' })
       })

@@ -14,26 +14,11 @@ class IndividualService {
     }
   }
 
-  async getIndividualById (id: string): Promise<Individual> {
-    const individual = await this.individualRepository.getIndividualById(id)
-    const { registered, ...result } = individual
-    return result
-  }
-
   async getIndividualRegisteredJob (id: string): Promise<any> {
     const individual = await this.individualRepository.getIndividualById(id)
     const { registered } = individual
     return {
       registered
-    }
-  }
-
-  async getIndividualByEmail (email: string): Promise<Individual> {
-    const individual = await this.individualRepository.getIndividualByEmail(email)
-    if (individual !== null) {
-      return individual
-    } else {
-      throw createHttpError(401, 'Incorrect Email Or Password')
     }
   }
 

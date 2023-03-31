@@ -1,6 +1,6 @@
 import { type Job, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { addJobSchema, deleteJobSchema, updateJobSchema } from './validation/jobSchema'
+import { addJobSchema, updateJobSchema } from './validation/jobSchema'
 import OrganizationService from '../services/organizationService'
 import JobService from '../services/jobService'
 
@@ -11,14 +11,6 @@ class JobController {
   async validateJob (job: { name: string, description: string }): Promise<void> {
     try {
       await addJobSchema.validateAsync(job)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
-
-  async validateDelete (body: { id: string }): Promise<void> {
-    try {
-      await deleteJobSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
     }
@@ -46,9 +38,10 @@ class JobController {
     }
   }
 
-  async getAllJob (): Promise<any> {
+  async getAllJob (query: any): Promise<any> {
     try {
-      return await this.jobService.getAllJob()
+      const { page, limit, title } = query
+      return await this.jobService.getAllJob(page, limit, title)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)
@@ -58,11 +51,11 @@ class JobController {
     }
   }
 
-  async updateJob (job: Job, payload: any): Promise<void> {
+  async updateJob (jobId: string, job: Job, payload: any): Promise<void> {
     try {
       const { id: organizationId, role }: { id: string, role: Role } = payload
       await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.updateJob(job, organizationId)
+      await this.jobService.updateJob(jobId, job, organizationId)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)
@@ -72,11 +65,11 @@ class JobController {
     }
   }
 
-  async deleteJob (body: { id: string }, payload: any): Promise<void> {
+  async deleteJob (jobId: string, payload: any): Promise<void> {
     try {
       const { id: organizationId, role }: { id: string, role: Role } = payload
       await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.deleteJob(body.id, organizationId)
+      await this.jobService.deleteJob(jobId, organizationId)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

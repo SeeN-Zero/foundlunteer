@@ -6,13 +6,8 @@ const addJobSchema = Joi.object({
 })
 
 const updateJobSchema = Joi.object({
-  id: Joi.string().required(),
   title: Joi.string().min(5).required(),
   description: Joi.string().required()
 })
 
-const deleteJobSchema = Joi.object({
-  id: Joi.string().required()
-})
-
-export { addJobSchema, updateJobSchema, deleteJobSchema }
+export { addJobSchema, updateJobSchema }

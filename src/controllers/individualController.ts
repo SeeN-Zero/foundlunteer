@@ -1,98 +1,18 @@
 import { type Individual, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
-  addIndividualSchema,
-  loginIndividualSchema, registerIndividualJobSchema,
-  saveJobIndividualSchema,
   updateIndividualSchema
 } from './validation/individualSchema'
-import UserService from '../services/userService'
 import IndividualService from '../services/individualService'
 
 class individualController {
   individualService = new IndividualService()
-  userService = new UserService()
-
-  async validateIndividual (individual: Individual): Promise<void> {
-    try {
-      await addIndividualSchema.validateAsync(individual)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
-
-  async validateLogin (login: { email: string, password: string }): Promise<void> {
-    try {
-      await loginIndividualSchema.validateAsync(login)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
 
   async validateUpdate (body: { id: string }): Promise<void> {
     try {
       await updateIndividualSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
-    }
-  }
-
-  async validateSaveJob (body: { id: string }): Promise<void> {
-    try {
-      await saveJobIndividualSchema.validateAsync(body)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
-
-  async validateRegisterIndividualJob (body: { id: string }): Promise<void> {
-    try {
-      await registerIndividualJobSchema.validateAsync(body)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
-
-  async addIndividual (individual: Individual): Promise<void> {
-    try {
-      await this.userService.checkEmailAvailability(individual.email)
-      await this.individualService.addIndividual(individual)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async loginIndividual (login: { email: string, password: string }): Promise<{ token: string }> {
-    try {
-      const individual = await this.individualService.getIndividualByEmail(login.email)
-      const token = await this.individualService.loginIndividual(login.password, individual)
-      return {
-        token
-      }
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async getIndividual (payload: any): Promise<any> {
-    try {
-      const { id: individualId, role }: { id: string, role: Role } = payload
-      await this.individualService.isIndividualValidation(role)
-      return await this.individualService.getIndividualById(individualId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
     }
   }
 

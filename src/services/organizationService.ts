@@ -15,26 +15,11 @@ class OrganizationService {
     }
   }
 
-  async getOrganizationById (id: string): Promise<any> {
-    const organization = await this.organizationRepository.getOrganizationById(id)
-    const { job, ...result } = organization
-    return result
-  }
-
   async getOrganizationJobById (id: string): Promise<any> {
     const organization = await this.organizationRepository.getOrganizationById(id)
     const { job } = organization
     return {
       job
-    }
-  }
-
-  async getOrganizationByEmail (email: string): Promise<Organization> {
-    const organization = await this.organizationRepository.getOrganizationByEmail(email)
-    if (organization !== null) {
-      return organization
-    } else {
-      throw createHttpError(401, 'Incorrect Email Or Password')
     }
   }
 

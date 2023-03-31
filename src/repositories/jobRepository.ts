@@ -9,12 +9,26 @@ class JobRepository {
     })
   }
 
-  async getAllJob (): Promise<any> {
+  async getAllJob (take: number | undefined, skip: number | undefined, filter: string | undefined): Promise<any> {
+    console.log(filter)
     return this.prisma.job.findMany({
+      take,
+      skip,
+      where: {
+        title: {
+          contains: filter,
+          mode: 'insensitive'
+        }
+      },
       orderBy: {
         createdAt: 'desc'
       },
-      include: {
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        jobStatus: true,
+        createdAt: true,
         organization: {
           select: {
             name: true,

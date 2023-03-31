@@ -28,6 +28,7 @@ class UserController {
     }
   }
 
+  // TODO : Add Email Send For Account Activation
   async addUser (body: any): Promise<void> {
     try {
       await this.userService.checkEmailAvailability(body.email)
@@ -46,6 +47,7 @@ class UserController {
     }
   }
 
+  // TODO : Add Barrier For Email Activation
   async loginUser (login: { email: string, password: string }): Promise<{ token: string }> {
     try {
       const [individual, organization] = await Promise.all([this.userService.getIndividualByEmail(login.email),

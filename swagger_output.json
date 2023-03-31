@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "1.2.0",
+    "version": "1.2.1",
     "title": "FOUNDLUNTEER API",
-    "description":"v1.1.0\n-Add Show saved job for individual\n-Create universal Add, Login, And Get For User\n\nv1.2.0\n-Add get and post image profile for user\n-Register API for Individual\n-Get detail job for Organization"
+    "description": "v1.1.0\n-Add Show saved job for individual\n-Create universal Add, Login, And Get For User\n\nv1.2.1\n-Add get and post image profile for user\n-Register API for Individual\n-Get detail job for Organization\n-Makes routing more make sense\n-Add Paging And Filtering For Get All Job"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
@@ -23,9 +23,15 @@
       "description": "For Organization or Individual"
     }
   ],
-  "consumes": ["application/json"],
-  "produces": ["application/json"],
-  "schemes": ["https"],
+  "consumes": [
+    "application/json"
+  ],
+  "produces": [
+    "application/json"
+  ],
+  "schemes": [
+    "https"
+  ],
   "securityDefinitions": {
     "bearerAuth": {
       "type": "apiKey",
@@ -37,46 +43,54 @@
   "paths": {
     "/user/add": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Add User",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "User",
-          "description": "Add New User",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password",
-              "name",
-              "address",
-              "phone",
-              "role"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "address": {
-                "type": "string"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "role": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "User",
+            "description": "Add New User",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password",
+                "name",
+                "address",
+                "phone",
+                "role"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                },
+                "name": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "role": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -105,30 +119,38 @@
     },
     "/user/login": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Login For User",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "User",
-          "description": "Login For User",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "User",
+            "description": "Login For User",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "password": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -157,18 +179,21 @@
     },
     "/user/get": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Get User Profile",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -186,18 +211,41 @@
     },
     "/job/getall": {
       "get": {
-        "tags": ["User"],
-        "summary": "Get All Job",
-        "produces": ["application/json"],
+        "tags": [
+          "User"
+        ],
+        "summary": "Get All Job With Query Example : {/job/getall?limit=2&page=2&title=konser}",
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "query",
+            "name": "limit",
+            "type": "string",
+            "description": "Maximum items for each page"
+          },
+          {
+            "in": "query",
+            "name": "page",
+            "type": "string",
+            "description": "Show page"
+          },
+          {
+            "in": "query",
+            "name": "title",
+            "type": "string",
+            "description": "Search Job By Title"
+          }
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -213,23 +261,31 @@
         }
       }
     },
-    "/user/image":{
+    "/user/image": {
       "post": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Add Individual or Organization Image Profile",
-        "consumes": ["multipart/form-data"],
-        "produces": ["application/json"],
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "parameters": [{
-          "in": "formData",
-          "name": "image",
-          "description": "jpg/jpeg/png",
-          "type": "file"
-        }],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "image",
+            "description": "jpg/jpeg/png",
+            "type": "file"
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -247,59 +303,70 @@
     },
     "/user/getimage": {
       "get": {
-        "tags": ["User"],
+        "tags": [
+          "User"
+        ],
         "summary": "Get User Image",
-        "produces": ["image/png"],
+        "produces": [
+          "image/png"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           }
         }
       }
     },
     "/individual/update": {
       "post": {
-        "tags": ["Individual"],
+        "tags": [
+          "Individual"
+        ],
         "summary": "Update For Individual",
         "description": "All body request optional",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Individual",
-          "description": "Add New Individual",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "address": {
-                "type": "string"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "age": {
-                "type": "integer"
-              },
-              "description": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Individual",
+            "description": "Add New Individual",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "age": {
+                  "type": "integer"
+                },
+                "description": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -337,34 +404,30 @@
         }
       }
     },
-    "/individual/saveordeletejob": {
+    "/individual/saveordeletejob/{jobId}": {
       "post": {
-        "tags": ["Individual"],
+        "tags": [
+          "Individual"
+        ],
         "summary": "Add or Remove Job Form Individual Job Save List",
         "description": "when the individual wants to save (bookmark) a job based on the job id, the response will be \"saved\", when the individual hits again for the job that has been saved, the job will be deleted from the list and the response will be \"Deleted\"",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Job Id",
-          "description": "Add Or Remove Job From Bookmark",
-          "schema": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -404,18 +467,21 @@
     },
     "/individual/savedjob": {
       "get": {
-        "tags": ["Individual"],
+        "tags": [
+          "Individual"
+        ],
         "summary": "Get Individual Saved Job",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -431,34 +497,30 @@
         }
       }
     },
-    "/individual/register": {
+    "/individual/register/{jobId}": {
       "post": {
-        "tags": ["Individual"],
+        "tags": [
+          "Individual"
+        ],
         "summary": "Register Job For Individual",
         "description": "Only individuals with complete data can register.",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Job Id",
-          "description": "Register Job",
-          "schema": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -498,18 +560,21 @@
     },
     "/individual/registeredjob": {
       "get": {
-        "tags": ["Individual"],
+        "tags": [
+          "Individual"
+        ],
         "summary": "Get Individual Registered Job And Process",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -527,41 +592,49 @@
     },
     "/organization/update": {
       "post": {
-        "tags": ["Organization"],
+        "tags": [
+          "Organization"
+        ],
         "summary": "Update For Organization",
         "description": "All body request optional",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Individual",
-          "description": "Add New Individual",
-          "schema": {
-            "type": "object",
-            "properties": {
-              "name": {
-                "type": "string"
-              },
-              "address": {
-                "type": "string"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "leader": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Individual",
+            "description": "Add New Individual",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "name": {
+                  "type": "string"
+                },
+                "address": {
+                  "type": "string"
+                },
+                "phone": {
+                  "type": "string"
+                },
+                "leader": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -601,18 +674,21 @@
     },
     "/organization/getjob": {
       "get": {
-        "tags": ["Organization"],
+        "tags": [
+          "Organization"
+        ],
         "summary": "Get Organization Job",
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -628,37 +704,32 @@
         }
       }
     },
-    "/organization/jobdetail": {
-      "post": {
-        "tags": ["Organization"],
+    "/organization/jobdetail/{jobId}": {
+      "get": {
+        "tags": [
+          "Organization"
+        ],
         "summary": "Get Organization Job Detail With Registrant",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
+        "produces": [
+          "application/json"
+        ],
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "parameters": [{
-          "in": "body",
-          "name": "Job Id",
-          "description": "Get Detail Job And Registrant",
-          "schema": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",
@@ -676,35 +747,43 @@
     },
     "/job/add": {
       "post": {
-        "tags": ["Organization"],
+        "tags": [
+          "Organization"
+        ],
         "summary": "Add Job By Organization",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Job",
-          "description": "Add New Job",
-          "schema": {
-            "type": "object",
-            "required": [
-              "title",
-              "description"
-            ],
-            "properties": {
-              "title": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Job",
+            "description": "Add New Job",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "description"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -742,41 +821,52 @@
         }
       }
     },
-    "/job/update": {
+    "/job/update/{jobId}": {
       "post": {
-        "tags": ["Organization"],
+        "tags": [
+          "Organization"
+        ],
         "summary": "Update Job By Organization",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Job",
-          "description": "Update Job",
-          "schema": {
-            "type": "object",
-            "required": [
-              "id",
-              "title",
-              "description"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              },
-              "title": {
-                "type": "string"
-              },
-              "description": {
-                "type": "string"
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
+          },
+          {
+            "in": "body",
+            "name": "Job",
+            "description": "Update Job",
+            "schema": {
+              "type": "object",
+              "required": [
+                "title",
+                "description"
+              ],
+              "properties": {
+                "title": {
+                  "type": "string"
+                },
+                "description": {
+                  "type": "string"
+                }
               }
             }
           }
-        }],
+        ],
         "responses": {
           "200": {
             "description": "OK",
@@ -814,267 +904,29 @@
         }
       }
     },
-    "/job/delete": {
+    "/job/delete/{jobId}": {
       "post": {
-        "tags": ["Organization"],
+        "tags": [
+          "Organization"
+        ],
         "summary": "Delete Job By Organization",
         "security": [
           {
-            "bearerAuth":[]
+            "bearerAuth": []
           }
         ],
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Job",
-          "description": "Delete Job",
-          "schema": {
-            "type": "object",
-            "required": [
-              "id"
-            ],
-            "properties": {
-              "id": {
-                "type": "string"
-              }
-            }
-          }
-        }],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-
-
-    "/individual/add": {
-      "post": {
-        "deprecated": true,
-        "tags": ["Individual"],
-        "summary": "Add Individual",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Individual",
-          "description": "Add New Individual",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password",
-              "name",
-              "address",
-              "phone",
-              "age"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "address": {
-                "type": "string"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "age": {
-                "type": "integer"
-              }
-            }
-          }
-        }],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "400": {
-            "description": "Bad Request",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/individual/login": {
-      "post": {
-        "deprecated": true,
-        "tags": ["Individual"],
-        "summary": "Login For Individual",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Individual",
-          "description": "Login For Individual",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              }
-            }
-          }
-        }],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/individual/get": {
-      "get": {
-        "deprecated": true,
-        "tags": ["Individual"],
-        "summary": "Get Individual Profile",
-        "produces": ["application/json"],
-        "security": [
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
           {
-            "bearerAuth":[]
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
           }
         ],
-        "responses": {
-          "200": {
-            "description": "OK - Try it out for response"
-
-          },
-          "403": {
-            "description": "Forbidden",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/organization/add": {
-      "post": {
-        "deprecated": true,
-        "tags": ["Organization"],
-        "summary": "Add Organization",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Organization",
-          "description": "Add New Organization",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password",
-              "name",
-              "address",
-              "phone",
-              "leader"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              },
-              "name": {
-                "type": "string"
-              },
-              "address": {
-                "type": "string"
-              },
-              "phone": {
-                "type": "string"
-              },
-              "leader": {
-                "type": "string"
-              }
-            }
-          }
-        }],
         "responses": {
           "200": {
             "description": "OK",
@@ -1097,78 +949,6 @@
                 }
               }
             }
-          }
-        }
-      }
-    },
-    "/organization/login": {
-      "post": {
-        "deprecated": true,
-        "tags": ["Organization"],
-        "summary": "Login For Organization",
-        "consumes": ["application/json"],
-        "produces": ["application/json"],
-        "parameters": [{
-          "in": "body",
-          "name": "Organization",
-          "description": "Login For Organization",
-          "schema": {
-            "type": "object",
-            "required": [
-              "email",
-              "password"
-            ],
-            "properties": {
-              "email": {
-                "type": "string"
-              },
-              "password": {
-                "type": "string"
-              }
-            }
-          }
-        }],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "token": {
-                  "type": "string"
-                }
-              }
-            }
-          },
-          "401": {
-            "description": "Unauthorized",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/organization/get": {
-      "get": {
-        "deprecated": true,
-        "tags": ["Organization"],
-        "summary": "Get Organization Profile",
-        "produces": ["application/json"],
-        "security": [
-          {
-            "bearerAuth":[]
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK - Try it out for response"
-
           },
           "403": {
             "description": "Forbidden",

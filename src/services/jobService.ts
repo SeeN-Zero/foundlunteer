@@ -12,9 +12,6 @@ class JobService {
   async getAllJob (page: string | undefined, limit: string | undefined, filter: string | undefined): Promise<any> {
     let skip: number | undefined
     let limitNum: number | undefined
-    console.log(typeof page)
-    console.log(typeof limit)
-    console.log(typeof filter)
     if (page !== undefined && limit === undefined) {
       throw createHttpError(400, 'Pages must be followed by a limit')
     } else if ((page === undefined || page === '1') && limit !== undefined) {
@@ -27,6 +24,15 @@ class JobService {
     const allJob = await this.jobRepository.getAllJob(limitNum, skip, filter)
     return {
       job: allJob
+    }
+  }
+
+  async getJobById (jobId: string): Promise<any> {
+    const job = await this.jobRepository.getJobById(jobId)
+    if (job === null) {
+      throw createHttpError(404, 'Job Not Found')
+    } else {
+      return job
     }
   }
 

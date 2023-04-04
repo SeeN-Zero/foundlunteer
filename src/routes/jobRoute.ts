@@ -36,6 +36,16 @@ router.get('/getAll', passport.authenticate('jwt', { session: false }), (req: Re
     })
 })
 
+router.get('/get/:jobId', passport.authenticate('jwt', { session: false }), (req: Request, res: Response, next: NextFunction) => {
+  jobController.getJobById(req.params)
+    .then(async (result) => {
+      res.status(200).json(result)
+    })
+    .catch(async (error) => {
+      next(error)
+    })
+})
+
 router.post('/update/:jobId',
   passport.authenticate('jwt', { session: false }),
   (req: Request, res: Response, next: NextFunction) => {

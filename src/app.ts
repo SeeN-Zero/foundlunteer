@@ -33,8 +33,8 @@ app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument))
 const opts = {
   jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
   secretOrKey: process.env.TOKEN_KEY as string,
-  algorithms: ['HS256']
-
+  algorithms: ['HS256'],
+  ignoreExpiration: true
 }
 
 passport.use(new JwtStrategy(opts, (jwtPayload, done): void => {

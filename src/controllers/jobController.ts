@@ -51,6 +51,19 @@ class JobController {
     }
   }
 
+  async getJobById (params: any): Promise<any> {
+    try {
+      const { jobId } = params
+      return await this.jobService.getJobById(jobId)
+    } catch (error: any) {
+      if (error.status === null || error.status === undefined) {
+        throw createHttpError(500, error.message)
+      } else {
+        throw error
+      }
+    }
+  }
+
   async updateJob (jobId: string, job: Job, payload: any): Promise<void> {
     try {
       const { id: organizationId, role }: { id: string, role: Role } = payload

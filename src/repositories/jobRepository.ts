@@ -10,7 +10,6 @@ class JobRepository {
   }
 
   async getAllJob (take: number | undefined, skip: number | undefined, filter: string | undefined): Promise<any> {
-    console.log(filter)
     return this.prisma.job.findMany({
       take,
       skip,
@@ -22,6 +21,32 @@ class JobRepository {
       },
       orderBy: {
         createdAt: 'desc'
+      },
+      select: {
+        id: true,
+        title: true,
+        description: true,
+        jobStatus: true,
+        createdAt: true,
+        organization: {
+          select: {
+            name: true,
+            email: true,
+            address: true,
+            phone: true,
+            leader: true,
+            description: true,
+            social: true
+          }
+        }
+      }
+    })
+  }
+
+  async getJobById (jobId: string): Promise<any> {
+    return this.prisma.job.findUnique({
+      where: {
+        id: jobId
       },
       select: {
         id: true,

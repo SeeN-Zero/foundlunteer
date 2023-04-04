@@ -63,7 +63,6 @@ router.post('/image',
   (req: Request, res: Response, next: NextFunction) => {
     upload(req, res, function (error) {
       if (error !== undefined) {
-        console.log(error.message)
         next(error)
       }
       res.status(200).json({ message: 'success' })

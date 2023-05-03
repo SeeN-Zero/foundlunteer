@@ -1,12 +1,14 @@
-import { type Individual, type Role } from '@prisma/client'
+import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
   updateIndividualSchema
 } from './validation/individualSchema'
 import IndividualService from '../services/individualService'
+import UserService from '../services/userService'
 
 class individualController {
   individualService = new IndividualService()
+  userService = new UserService()
 
   async validateUpdate (body: { id: string }): Promise<void> {
     try {
@@ -16,12 +18,21 @@ class individualController {
     }
   }
 
-  async updateIndividual (individual: Individual, payload: any): Promise<void> {
+  async updateIndividual (body: any, payload: any): Promise<void> {
     try {
       const { id: individualId, role }: { id: string, role: Role } = payload
       await this.individualService.isIndividualValidation(role)
-      individual.id = individualId
-      await this.individualService.updateIndividual(individual)
+      const user = {
+        name: body.name,
+        address: body.address,
+        phone: body.phone
+      }
+      const individual = {
+        age: body.age,
+        description: body.description
+      }
+      await this.userService.updateUser(individualId, user)
+      await this.individualService.updateIndividual(individualId, individual)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

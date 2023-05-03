@@ -1,21 +1,27 @@
-import { type Organization, PrismaClient } from '@prisma/client'
+import { PrismaClient, type User } from '@prisma/client'
 
 class OrganizationRepository {
   prisma = new PrismaClient()
 
-  async addOrganization (organization: Organization): Promise<void> {
-    await this.prisma.organization.create({
-      data: organization
-    })
-  }
-
-  async getOrganizationByEmail (email: string): Promise<Organization | null> {
-    return this.prisma.organization.findUnique({
-      where: {
-        email
+  async addOrganization (user: User): Promise<void> {
+    await this.prisma.user.create({
+      data: {
+        ...user,
+        Organization: {
+          create: {
+          }
+        }
       }
     })
   }
+
+  // async getOrganizationByEmail (email: string): Promise<Organization | null> {
+  //   return this.prisma.organization.findUnique({
+  //     where: {
+  //       email
+  //     }
+  //   })
+  // }
 
   async getOrganizationById (id: string): Promise<any> {
     return this.prisma.organization.findUniqueOrThrow({
@@ -23,11 +29,6 @@ class OrganizationRepository {
         id
       },
       select: {
-        id: true,
-        email: true,
-        name: true,
-        address: true,
-        phone: true,
         leader: true,
         description: true,
         social: true,
@@ -47,10 +48,10 @@ class OrganizationRepository {
     })
   }
 
-  async updateOrganization (organization: Organization): Promise<Organization> {
+  async updateOrganization (id: string, organization: any): Promise<any> {
     return this.prisma.organization.update({
       where: {
-        id: organization.id
+        id
       },
       data: organization
     })
@@ -79,10 +80,14 @@ class OrganizationRepository {
             individual: {
               select: {
                 id: true,
-                email: true,
-                name: true,
-                address: true,
-                phone: true,
+                user: {
+                  select: {
+                    email: true,
+                    name: true,
+                    address: true,
+                    phone: true
+                  }
+                },
                 age: true,
                 description: true,
                 social: true

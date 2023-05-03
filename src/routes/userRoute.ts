@@ -1,7 +1,7 @@
 import express, { type NextFunction, type Request, type Response } from 'express'
 import UserController from '../controllers/userController'
 import passport from 'passport'
-import { upload } from '../services/multer'
+import { upload } from '../services/Configuration/multer'
 
 const router = express.Router()
 
@@ -80,6 +80,18 @@ router.get('/getimage',
             res.status(404).json({ message: 'Image Not Found' })
           }
         })
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  }
+)
+
+router.post('/forgotPassword',
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.forgotPassword(req.body)
+      .then(async () => {
+        res.status(200).json({ message: 'success' })
       })
       .catch(async (error) => {
         next(error)

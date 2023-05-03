@@ -6,7 +6,7 @@ const updateIndividualSchema = Joi.object({
   phone: Joi.string().min(10).max(12),
   age: Joi.number().min(12).max(100),
   description: Joi.string(),
-  social: Joi.string().required()
+  social: Joi.string()
 })
 
 export { updateIndividualSchema }

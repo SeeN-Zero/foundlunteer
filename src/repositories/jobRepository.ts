@@ -30,10 +30,14 @@ class JobRepository {
         createdAt: true,
         organization: {
           select: {
-            name: true,
-            email: true,
-            address: true,
-            phone: true,
+            user: {
+              select: {
+                email: true,
+                name: true,
+                address: true,
+                phone: true
+              }
+            },
             leader: true,
             description: true,
             social: true
@@ -56,10 +60,14 @@ class JobRepository {
         createdAt: true,
         organization: {
           select: {
-            name: true,
-            email: true,
-            address: true,
-            phone: true,
+            user: {
+              select: {
+                email: true,
+                name: true,
+                address: true,
+                phone: true
+              }
+            },
             leader: true,
             description: true,
             social: true

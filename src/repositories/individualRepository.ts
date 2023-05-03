@@ -1,28 +1,32 @@
-import { type Individual, PrismaClient, RegistrationStatus } from '@prisma/client'
+import { type Individual, PrismaClient, RegistrationStatus, type User } from '@prisma/client'
 
 class IndividualRepository {
   prisma = new PrismaClient()
 
-  async addIndividual (individual: Individual): Promise<void> {
-    await this.prisma.individual.create({
+  async addIndividual (user: User): Promise<void> {
+    await this.prisma.user.create({
       data: {
-        ...individual,
-        saved: {
+        ...user,
+        Individual: {
           create: {
-            id: undefined
+            list: {
+              create: {
+                id: undefined
+              }
+            }
           }
         }
       }
     })
   }
 
-  async getIndividualByEmail (email: string): Promise<Individual | null> {
-    return this.prisma.individual.findUnique({
-      where: {
-        email
-      }
-    })
-  }
+  // async getIndividualByEmail (email: string): Promise<Individual | null> {
+  //   return this.prisma.individual.findUnique({
+  //     where: {
+  //       email
+  //     }
+  //   })
+  // }
 
   async getIndividualById (individualId: string): Promise<any> {
     return this.prisma.individual.findUniqueOrThrow({
@@ -30,11 +34,6 @@ class IndividualRepository {
         id: individualId
       },
       select: {
-        id: true,
-        email: true,
-        name: true,
-        address: true,
-        phone: true,
         age: true,
         description: true,
         social: true,
@@ -45,11 +44,14 @@ class IndividualRepository {
               include: {
                 organization: {
                   select: {
-                    id: true,
-                    email: true,
-                    name: true,
-                    address: true,
-                    phone: true,
+                    user: {
+                      select: {
+                        email: true,
+                        name: true,
+                        address: true,
+                        phone: true
+                      }
+                    },
                     leader: true,
                     description: true,
                     social: true
@@ -63,17 +65,17 @@ class IndividualRepository {
     })
   }
 
-  async updateIndividual (individual: Individual): Promise<Individual> {
+  async updateIndividual (id: string, individual: any): Promise<Individual> {
     return this.prisma.individual.update({
       where: {
-        id: individual.id
+        id
       },
       data: individual
     })
   }
 
   async saveJob (individualId: string, jobId: string): Promise<void> {
-    await this.prisma.listSaved.update({
+    await this.prisma.userList.update({
       where: { individualId },
       data: {
         jobs: {
@@ -84,7 +86,7 @@ class IndividualRepository {
   }
 
   async deleteJob (individualId: string, jobId: string): Promise<void> {
-    await this.prisma.listSaved.update({
+    await this.prisma.userList.update({
       where: { individualId },
       data: {
         jobs: {
@@ -95,7 +97,7 @@ class IndividualRepository {
   }
 
   async checkSavedJob (individualId: string, jobId: string): Promise<any> {
-    return this.prisma.listSaved.findMany({
+    return this.prisma.userList.findMany({
       where: {
         AND: [
           {
@@ -115,7 +117,7 @@ class IndividualRepository {
   }
 
   async getIndividualSavedJob (individualId: string): Promise<any> {
-    return this.prisma.listSaved.findUniqueOrThrow({
+    return this.prisma.userList.findUniqueOrThrow({
       where: {
         individualId
       },
@@ -124,10 +126,14 @@ class IndividualRepository {
           include: {
             organization: {
               select: {
-                name: true,
-                email: true,
-                address: true,
-                phone: true,
+                user: {
+                  select: {
+                    email: true,
+                    name: true,
+                    address: true,
+                    phone: true
+                  }
+                },
                 leader: true,
                 description: true,
                 social: true

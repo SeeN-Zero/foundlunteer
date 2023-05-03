@@ -1,12 +1,14 @@
-import { type Organization, type Role } from '@prisma/client'
+import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
   updateOrganizationSchema
 } from './validation/organizationSchema'
 import OrganizationService from '../services/organizationService'
+import UserService from '../services/userService'
 
 class OrganizationController {
   organizationService = new OrganizationService()
+  userService = new UserService()
 
   async validateUpdate (body: { id: string }): Promise<void> {
     try {
@@ -30,12 +32,21 @@ class OrganizationController {
     }
   }
 
-  async updateOrganization (organization: Organization, payload: any): Promise<void> {
+  async updateOrganization (body: any, payload: any): Promise<void> {
     try {
       const { id: organizationId, role }: { id: string, role: Role } = payload
       await this.organizationService.isOrganizationValidation(role)
-      organization.id = organizationId
-      await this.organizationService.updateOrganization(organization)
+      const user = {
+        name: body.name,
+        address: body.address,
+        phone: body.phone
+      }
+      const organization = {
+        leader: body.leader,
+        description: body.description
+      }
+      await this.userService.updateUser(organizationId, user)
+      await this.organizationService.updateOrganization(organizationId, organization)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

@@ -1,11 +1,9 @@
-import { type Individual, Role } from '@prisma/client'
+import { Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import IndividualRepository from '../repositories/individualRepository'
-import PasswordEncoder from './passwordEncoder'
-import Jwt from './jwt'
+import Jwt from './Configuration/jwt'
 class IndividualService {
   individualRepository = new IndividualRepository()
-  passwordEncoder = new PasswordEncoder()
   jwt = new Jwt()
 
   async isIndividualValidation (role: string): Promise<void> {
@@ -22,18 +20,18 @@ class IndividualService {
     }
   }
 
-  async addIndividual (individual: Individual): Promise<void> {
-    individual.password = await this.passwordEncoder.encode(individual.password)
-    await this.individualRepository.addIndividual(individual)
-  }
+  // async addIndividual (individual: Individual): Promise<void> {
+  //   individual.password = await this.passwordEncoder.encode(individual.password)
+  //   await this.individualRepository.addIndividual(individual)
+  // }
 
-  async loginIndividual (loginPassword: string, individual: Individual): Promise<string> {
-    await this.passwordEncoder.compare(loginPassword, individual.password)
-    return await this.jwt.generateJwt(individual.id, Role.INDIVIDUAL)
-  }
+  // async loginIndividual (loginPassword: string, individual: Individual): Promise<string> {
+  //   await this.passwordEncoder.compare(loginPassword, individual.password)
+  //   return await this.jwt.generateJwt(individual.id, Role.INDIVIDUAL)
+  // }
 
-  async updateIndividual (individual: Individual): Promise<void> {
-    await this.individualRepository.updateIndividual(individual)
+  async updateIndividual (id: string, individual: any): Promise<void> {
+    await this.individualRepository.updateIndividual(id, individual)
   }
 
   async saveOrDeleteJob (individualId: string, jobId: string): Promise<string> {

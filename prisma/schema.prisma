@@ -10,20 +10,36 @@ datasource db {
   url      = env("DATABASE_URL")
 }
 
+model User {
+  id           String        @id @default(uuid())
+  email        String        @unique
+  password     String
+  name         String
+  address      String
+  phone        String
+  role         Role
+  Individual   Individual?   @relation("UserIndividual")
+  Organization Organization? @relation("UserOrganization")
+  createdAt    DateTime      @default(now())
+}
+
 model Individual {
-  id          String         @id @default(uuid())
-  email       String         @unique
-  password    String
-  name        String
-  address     String
-  phone       String
+  id          String         @unique
+  user        User?          @relation(name: "UserIndividual", fields: [id], references: [id])
   age         Int?
   description String?
   social      String?
-  saved       ListSaved?     @relation("IndividualOnSaved")
+  list        UserList?      @relation("IndividualOnUserList")
   registered  Registration[] @relation("IndividualOnRegistration")
-  createdAt   DateTime       @default(now())
-  role        Role           @default(INDIVIDUAL)
+}
+
+model Organization {
+  id          String  @unique
+  user        User?   @relation(name: "UserOrganization", fields: [id], references: [id])
+  leader      String?
+  description String?
+  social      String?
+  job         Job[]   @relation("OrganizationOnJob")
 }
 
 model Job {
@@ -32,25 +48,10 @@ model Job {
   description    String
   jobStatus      JobStatus      @default(OPEN)
   registrant     Registration[] @relation("JobOnRegistration")
-  listSaved      ListSaved[]
+  userList       UserList[]
   organizationId String
   organization   Organization   @relation(name: "OrganizationOnJob", fields: [organizationId], references: [id])
   createdAt      DateTime       @default(now())
-}
-
-model Organization {
-  id          String   @id @default(uuid())
-  email       String   @unique
-  password    String
-  name        String
-  address     String
-  phone       String
-  leader      String?
-  description String?
-  social      String?
-  job         Job[]    @relation("OrganizationOnJob")
-  role        Role     @default(ORGANIZATION)
-  createdAt   DateTime @default(now())
 }
 
 // Relation
@@ -65,21 +66,12 @@ model Registration {
   @@id([individualId, jobId])
 }
 
-model ListSaved {
+model UserList {
   id           String     @id @default(uuid())
   individualId String     @unique
-  individual   Individual @relation(name: "IndividualOnSaved", fields: [individualId], references: [id])
+  individual   Individual @relation(name: "IndividualOnUserList", fields: [individualId], references: [id])
   jobs         Job[]
 }
-
-// model SavedJob {
-//   listSavedId String
-//   listSaved   ListSaved @relation(name: "ListOnSavedJob", fields: [listSavedId], references: [id])
-//   jobId       String
-//   job         Job       @relation(name: "JobOnSavedJob", fields: [jobId], references: [id])
-//
-//   @@id([listSavedId, jobId])
-// }
 
 enum RegistrationStatus {
   ONPROCESS

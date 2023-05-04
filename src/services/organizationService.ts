@@ -14,11 +14,7 @@ class OrganizationService {
   }
 
   async getOrganizationJobById (id: string): Promise<any> {
-    const organization = await this.organizationRepository.getOrganizationById(id)
-    const { job } = organization
-    return {
-      job
-    }
+    return await this.organizationRepository.getJob(id)
   }
 
   // async addOrganization (organization: Organization): Promise<any> {

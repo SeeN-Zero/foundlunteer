@@ -87,7 +87,28 @@ router.get('/getimage',
   }
 )
 
-router.post('/forgotPassword',
+router.post('/sendcode',
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.sendCode(req.body)
+      .then(async () => {
+        res.status(200).json({ message: 'success' })
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  }
+)
+
+router.post('/forgotpassword',
+  (req: Request, res: Response, next: NextFunction) => {
+    userController.validateForgotPassword(req.body)
+      .then(async () => {
+        next()
+      })
+      .catch(async (error) => {
+        next(error)
+      })
+  },
   (req: Request, res: Response, next: NextFunction) => {
     userController.forgotPassword(req.body)
       .then(async () => {

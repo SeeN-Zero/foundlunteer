@@ -65,7 +65,7 @@ router.get('/registeredjob',
 router.post('/register/:jobId',
   passport.authenticate('jwt', { session: false }),
   (req: Request, res: Response, next: NextFunction) => {
-    individualController.registerIndividualJob(req.user, req.body.id)
+    individualController.registerIndividualJob(req.user, req.params.jobId)
       .then(async () => {
         res.status(200).json({ message: 'success' })
       })

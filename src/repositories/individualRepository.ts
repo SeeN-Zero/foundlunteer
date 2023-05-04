@@ -34,33 +34,17 @@ class IndividualRepository {
         id: individualId
       },
       select: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+            address: true,
+            phone: true
+          }
+        },
         age: true,
         description: true,
-        social: true,
-        registered: {
-          select: {
-            registrationStatus: true,
-            job: {
-              include: {
-                organization: {
-                  select: {
-                    user: {
-                      select: {
-                        email: true,
-                        name: true,
-                        address: true,
-                        phone: true
-                      }
-                    },
-                    leader: true,
-                    description: true,
-                    social: true
-                  }
-                }
-              }
-            }
-          }
-        }
+        social: true
       }
     })
   }
@@ -145,7 +129,7 @@ class IndividualRepository {
     })
   }
 
-  async registerIndividualJob (individualId: string, jobId: string): Promise<void> {
+  async registerJob (individualId: string, jobId: string): Promise<void> {
     await this.prisma.individual.update({
       where: { id: individualId },
       data: {
@@ -155,6 +139,40 @@ class IndividualRepository {
             job: {
               connect: {
                 id: jobId
+              }
+            }
+          }
+        }
+      }
+    })
+  }
+
+  async getRegisteredJob (individualId: string): Promise<any> {
+    return this.prisma.individual.findUniqueOrThrow({
+      where: {
+        id: individualId
+      },
+      select: {
+        registered: {
+          select: {
+            registrationStatus: true,
+            job: {
+              include: {
+                organization: {
+                  select: {
+                    user: {
+                      select: {
+                        email: true,
+                        name: true,
+                        address: true,
+                        phone: true
+                      }
+                    },
+                    leader: true,
+                    description: true,
+                    social: true
+                  }
+                }
               }
             }
           }

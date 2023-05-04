@@ -10,7 +10,7 @@ class OrganizationController {
   organizationService = new OrganizationService()
   userService = new UserService()
 
-  async validateUpdate (body: { id: string }): Promise<void> {
+  async validateUpdate (body: any): Promise<void> {
     try {
       await updateOrganizationSchema.validateAsync(body)
     } catch (error: any) {

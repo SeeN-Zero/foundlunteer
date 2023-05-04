@@ -12,14 +12,6 @@ class IndividualService {
     }
   }
 
-  async getIndividualRegisteredJob (id: string): Promise<any> {
-    const individual = await this.individualRepository.getIndividualById(id)
-    const { registered } = individual
-    return {
-      registered
-    }
-  }
-
   // async addIndividual (individual: Individual): Promise<void> {
   //   individual.password = await this.passwordEncoder.encode(individual.password)
   //   await this.individualRepository.addIndividual(individual)
@@ -30,8 +22,8 @@ class IndividualService {
   //   return await this.jwt.generateJwt(individual.id, Role.INDIVIDUAL)
   // }
 
-  async updateIndividual (id: string, individual: any): Promise<void> {
-    await this.individualRepository.updateIndividual(id, individual)
+  async updateIndividual (individualId: string, individual: any): Promise<void> {
+    await this.individualRepository.updateIndividual(individualId, individual)
   }
 
   async saveOrDeleteJob (individualId: string, jobId: string): Promise<string> {
@@ -74,7 +66,7 @@ class IndividualService {
       return property !== null
     })
     if (notNull) {
-      await this.individualRepository.registerIndividualJob(individualId, jobId)
+      await this.individualRepository.registerJob(individualId, jobId)
         .catch((e) => {
           if (e.code === 'P2002') {
             throw createHttpError(400, 'Already registered')
@@ -85,6 +77,10 @@ class IndividualService {
     } else {
       throw createHttpError(400, 'Individual data must be complete before registering')
     }
+  }
+
+  async getIndividualRegisteredJob (individualId: string): Promise<any> {
+    return await this.individualRepository.getRegisteredJob(individualId)
   }
 }
 

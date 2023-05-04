@@ -20,7 +20,17 @@ model User {
   role         Role
   Individual   Individual?   @relation("UserIndividual")
   Organization Organization? @relation("UserOrganization")
+  token        Token?        @relation("UserToken")
   createdAt    DateTime      @default(now())
+}
+
+model Token {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  code      Int
+  createdAt DateTime
+  expireAt  DateTime
+  userEmail User     @relation(name: "UserToken", fields: [email], references: [email])
 }
 
 model Individual {

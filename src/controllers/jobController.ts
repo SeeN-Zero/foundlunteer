@@ -8,15 +8,15 @@ class JobController {
   organizationService = new OrganizationService()
   jobService = new JobService()
 
-  async validateJob (job: { name: string, description: string }): Promise<void> {
+  async validateJob (body: any): Promise<void> {
     try {
-      await addJobSchema.validateAsync(job)
+      await addJobSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
     }
   }
 
-  async validateUpdate (body: { id: string }): Promise<void> {
+  async validateUpdate (body: any): Promise<void> {
     try {
       await updateJobSchema.validateAsync(body)
     } catch (error: any) {

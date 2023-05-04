@@ -29,7 +29,8 @@ class individualController {
       }
       const individual = {
         age: body.age,
-        description: body.description
+        description: body.description,
+        social: body.social
       }
       await this.userService.updateUser(individualId, user)
       await this.individualService.updateIndividual(individualId, individual)

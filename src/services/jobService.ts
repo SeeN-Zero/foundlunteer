@@ -48,7 +48,7 @@ class JobService {
   async deleteJob (jobId: string, organizationId: string): Promise<void> {
     const totalDelete = await this.jobRepository.deleteJob(jobId, organizationId)
     if (totalDelete.count === 0) {
-      throw createHttpError(404)
+      throw createHttpError(404, 'Data Not Found')
     }
   }
 }

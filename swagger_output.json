@@ -3,7 +3,7 @@
   "info": {
     "version": "2.0.0",
     "title": "FOUNDLUNTEER API",
-    "description": "v2.0.0\n-Change Database Relation"
+    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.0\n-Add Forgot Password Feature"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
@@ -358,6 +358,58 @@
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          }
+        }
+      }
+    },
+    "/user/sendcode": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Send Email Forgot Password Code ",
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          }
+        }
+      }
+    },
+    "/user/forgotpassword": {
+      "post": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Change Password Use Code",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "User",
+            "description": "Change Password",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email",
+                "code",
+                "password"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                },
+                "code": {
+                  "type": "integer"
+                },
+                "password": {
+                  "type": "string"
+                }
+              }
+            }
           }
         ],
         "responses": {

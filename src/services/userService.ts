@@ -56,15 +56,9 @@ class UserService {
 
   async getUser (id: string, role: Role): Promise<any> {
     if (role === Role.INDIVIDUAL) {
-      const user = await this.userRepository.getUser(id)
-      const individual = await this.individualRepository.getIndividualById(id)
-      const { registered, ...result } = individual
-      return { ...user, ...result }
+      return await this.individualRepository.getIndividualById(id)
     } else {
-      const user = await this.userRepository.getUser(id)
-      const organization = await this.organizationRepository.getOrganizationById(id)
-      const { job, ...result } = organization
-      return { ...user, ...result }
+      return await this.organizationRepository.getOrganizationById(id)
     }
   }
 
@@ -72,8 +66,29 @@ class UserService {
     await this.userRepository.updateUser(id, user)
   }
 
-  async sendEmailForgotPassword (targetMail: string, code: number): Promise<void> {
+  async sendEmailForgotPassword (targetMail: string): Promise<void> {
+    const code = Math.floor(Math.random() * 9000 + 1000)
+    // Expire after 30 minutes
+    const createdAt = new Date(Date.now()).toISOString()
+    const expiredAt = new Date(Date.now() + 0.5 * (60 * 60 * 1000)).toISOString()
+    await this.userRepository.createCode(targetMail, code, createdAt, expiredAt)
     await this.email.sendEmail(targetMail, { code }, 'email.html', 'Foundlunteer Forgot Password')
+  }
+
+  async changePassword (email: string, code: number, password: string): Promise<boolean> {
+    const user = await this.userRepository.getCode(email)
+    if (user !== null) {
+      const currentDate = new Date(Date.now())
+      if (code === user.code && currentDate < user.expireAt) {
+        const newPassword = await this.passwordEncoder.encode(password)
+        await this.userRepository.updatePassword(email, newPassword)
+      } else {
+        throw createHttpError(400, 'Code Invalid')
+      }
+    } else {
+      throw createHttpError(404, 'Data Not Found')
+    }
+    return true
   }
 }
 

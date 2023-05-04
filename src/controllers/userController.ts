@@ -1,24 +1,32 @@
-import { type Individual, type Role } from '@prisma/client'
+import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import UserService from '../services/userService'
-import { addUserSchema, loginUserSchema } from './validation/userSchema'
+import { addUserSchema, forgotPasswordSchema, loginUserSchema } from './validation/userSchema'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 
 class UserController {
   userService = new UserService()
 
-  async validateUser (individual: Individual): Promise<void> {
+  async validateUser (body: any): Promise<void> {
     try {
-      await addUserSchema.validateAsync(individual)
+      await addUserSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
     }
   }
 
-  async validateLogin (login: { email: string, password: string }): Promise<void> {
+  async validateLogin (body: any): Promise<void> {
     try {
-      await loginUserSchema.validateAsync(login)
+      await loginUserSchema.validateAsync(body)
+    } catch (error: any) {
+      throw createHttpError(400, error.message)
+    }
+  }
+
+  async validateForgotPassword (body: any): Promise<void> {
+    try {
+      await forgotPasswordSchema.validateAsync(body)
     } catch (error: any) {
       throw createHttpError(400, error.message)
     }
@@ -29,11 +37,6 @@ class UserController {
     try {
       body.role = body.role.toUpperCase()
       await this.userService.addUser(body)
-      // if (body.role === Role.INDIVIDUAL) {
-      //   await this.individualService.addIndividual(body)
-      // } else {
-      //   await this.organizationService.addOrganization(body)
-      // }
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)
@@ -78,10 +81,26 @@ class UserController {
     return path.join(_dirname, '../image', id + '.png')
   }
 
-  async forgotPassword (body: any): Promise<void> {
+  async sendCode (body: any): Promise<void> {
     try {
       const { email } = body
-      await this.userService.sendEmailForgotPassword(email, 3103)
+      const user = await this.userService.getUserByEmail(email)
+      if (user !== null) {
+        await this.userService.sendEmailForgotPassword(email)
+      }
+    } catch (error: any) {
+      if (error.status === null || error.status === undefined) {
+        throw createHttpError(500, error.message)
+      } else {
+        throw error
+      }
+    }
+  }
+
+  async forgotPassword (body: any): Promise<void> {
+    try {
+      const { email, code, password } = body
+      await this.userService.changePassword(email, code, password)
     } catch (error: any) {
       if (error.status === null || error.status === undefined) {
         throw createHttpError(500, error.message)

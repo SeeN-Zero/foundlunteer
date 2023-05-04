@@ -23,15 +23,42 @@ class OrganizationRepository {
   //   })
   // }
 
-  async getOrganizationById (id: string): Promise<any> {
+  async getOrganizationById (organizationId: string): Promise<any> {
     return this.prisma.organization.findUniqueOrThrow({
+      where: {
+        id: organizationId
+      },
+      select: {
+        user: {
+          select: {
+            email: true,
+            name: true,
+            address: true,
+            phone: true
+          }
+        },
+        leader: true,
+        description: true,
+        social: true
+      }
+    })
+  }
+
+  async updateOrganization (id: string, organization: any): Promise<any> {
+    return this.prisma.organization.update({
       where: {
         id
       },
+      data: organization
+    })
+  }
+
+  async getJob (organizationId: string): Promise<any> {
+    return this.prisma.organization.findUniqueOrThrow({
+      where: {
+        id: organizationId
+      },
       select: {
-        leader: true,
-        description: true,
-        social: true,
         job: {
           orderBy: {
             createdAt: 'desc'
@@ -45,15 +72,6 @@ class OrganizationRepository {
           }
         }
       }
-    })
-  }
-
-  async updateOrganization (id: string, organization: any): Promise<any> {
-    return this.prisma.organization.update({
-      where: {
-        id
-      },
-      data: organization
     })
   }
 

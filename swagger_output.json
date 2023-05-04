@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.0.0",
+    "version": "2.1.1",
     "title": "FOUNDLUNTEER API",
-    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.0\n-Add Forgot Password Feature"
+    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.1\n-Add Forgot Password Feature\n-Fix Error Send Email"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
@@ -373,6 +373,24 @@
           "User"
         ],
         "summary": "Send Email Forgot Password Code ",
+        "parameters": [
+          {
+            "in": "body",
+            "name": "User",
+            "description": "Change Password",
+            "schema": {
+              "type": "object",
+              "required": [
+                "email"
+              ],
+              "properties": {
+                "email": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
         "responses": {
           "200": {
             "description": "OK - Try it out for response"

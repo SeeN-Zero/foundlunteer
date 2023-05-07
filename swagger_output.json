@@ -3,7 +3,7 @@
   "info": {
     "version": "2.1.1",
     "title": "FOUNDLUNTEER API",
-    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.1\n-Add Forgot Password Feature\n-Fix Error Send Email"
+    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.1\n-Add Forgot Password Feature\n-Fix Error Send Email\n\nv2.2.0\n-Add Barier for download CV\n-Fix Forgot Password Bug"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",
@@ -306,7 +306,7 @@
         }
       }
     },
-    "/user/image": {
+    "/user/file": {
       "post": {
         "tags": [
           "User"
@@ -328,6 +328,12 @@
             "in": "formData",
             "name": "image",
             "description": "jpg/jpeg/png",
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "cv",
+            "description": "pdf",
             "type": "file"
           }
         ],
@@ -351,13 +357,94 @@
         "tags": [
           "User"
         ],
-        "summary": "Get User Image",
+        "summary": "Get User Image (Param Optional dont fill to get owner file)",
         "produces": [
           "image/png"
         ],
         "security": [
           {
             "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          }
+        }
+      }
+    },
+    "/user/getimage/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get User Image (Param Optional dont fill to get owner file(use endpoint above))",
+        "produces": [
+          "image/png"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "type": "string",
+            "required": true,
+            "description": "User Id"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          }
+        }
+      }
+    },
+    "/user/getcv/": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get User Cv (Param Optional dont fill to get owner file)",
+        "produces": [
+          "application/pdf"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          }
+        }
+      }
+    },
+    "/user/getcv/{userId}": {
+      "get": {
+        "tags": [
+          "User"
+        ],
+        "summary": "Get User Cv (Param Optional dont fill to get owner file(use endpoint above)",
+        "produces": [
+          "application/pdf"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "userId",
+            "type": "string",
+            "required": true,
+            "description": "User Id"
           }
         ],
         "responses": {

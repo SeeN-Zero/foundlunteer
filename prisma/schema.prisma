@@ -28,6 +28,7 @@ model Token {
   id        String   @id @default(uuid())
   email     String   @unique
   code      Int
+  isValid   Boolean  @default(true)
   createdAt DateTime
   expireAt  DateTime
   userEmail User     @relation(name: "UserToken", fields: [email], references: [email])

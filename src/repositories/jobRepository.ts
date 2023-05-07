@@ -32,6 +32,7 @@ class JobRepository {
           select: {
             user: {
               select: {
+                id: true,
                 email: true,
                 name: true,
                 address: true,

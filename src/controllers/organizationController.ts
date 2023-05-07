@@ -1,75 +1,71 @@
 import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import {
-  updateOrganizationSchema
-} from './validation/organizationSchema'
 import OrganizationService from '../services/organizationService'
 import UserService from '../services/userService'
+import { type NextFunction, type Request, type Response } from 'express'
 
-class OrganizationController {
-  organizationService = new OrganizationService()
-  userService = new UserService()
+const organizationService = new OrganizationService()
+const userService = new UserService()
 
-  async validateUpdate (body: any): Promise<void> {
-    try {
-      await updateOrganizationSchema.validateAsync(body)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
+async function getOrganizationJob (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role }: { id: string, role: Role } = req.user
+      await organizationService.isOrganizationValidation(role)
+      const organization = await organizationService.getOrganizationJobById(organizationId)
+      res.status(200).json(organization)
     }
-  }
-
-  async getOrganizationJob (payload: any): Promise<any> {
-    try {
-      const { id: organizationId, role }: { id: string, role: Role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      return await this.organizationService.getOrganizationJobById(organizationId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async updateOrganization (body: any, payload: any): Promise<void> {
-    try {
-      const { id: organizationId, role }: { id: string, role: Role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      const user = {
-        name: body.name,
-        address: body.address,
-        phone: body.phone
-      }
-      const organization = {
-        leader: body.leader,
-        description: body.description
-      }
-      await this.userService.updateUser(organizationId, user)
-      await this.organizationService.updateOrganization(organizationId, organization)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async getJobDetail (jobId: string, payload: any): Promise<any> {
-    try {
-      const { id: organizationId, role }: { id: string, role: Role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      const detail = await this.organizationService.getJobDetail(organizationId, jobId)
-      return detail[0]
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
     }
   }
 }
 
-export default OrganizationController
+async function updateOrganization (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role }: { id: string, role: Role } = req.user
+      await organizationService.isOrganizationValidation(role)
+      const user = {
+        name: req.body.name,
+        address: req.body.address,
+        phone: req.body.phone
+      }
+      const organization = {
+        leader: req.body.leader,
+        description: req.body.description
+      }
+      await userService.updateUser(organizationId, user)
+      await organizationService.updateOrganization(organizationId, organization)
+      res.status(200).json({ message: 'success' })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function getJobDetail (req: Request, res: Response, next: NextFunction): Promise<any> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role }: { id: string, role: Role } = req.user
+      await organizationService.isOrganizationValidation(role)
+      const detail = await organizationService.getJobDetail(organizationId, req.params.jobId)
+      res.status(200).json(detail[0])
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+export { getOrganizationJob, updateOrganization, getJobDetail }

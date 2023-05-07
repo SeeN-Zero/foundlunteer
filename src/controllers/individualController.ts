@@ -2,7 +2,7 @@ import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
   updateIndividualSchema
-} from './validation/individualSchema'
+} from '../middleware/validation/individualSchema'
 import IndividualService from '../services/individualService'
 import UserService from '../services/userService'
 

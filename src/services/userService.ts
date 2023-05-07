@@ -75,20 +75,34 @@ class UserService {
     await this.email.sendEmail(targetMail, { code }, 'email.html', 'Foundlunteer Forgot Password')
   }
 
-  async changePassword (email: string, code: number, password: string): Promise<boolean> {
+  async changePassword (email: string, code: number, password: string): Promise<void> {
     const user = await this.userRepository.getCode(email)
     if (user !== null) {
       const currentDate = new Date(Date.now())
-      if (code === user.code && currentDate < user.expireAt) {
+      if (code === user.code && currentDate < user.expireAt && user.isValid) {
         const newPassword = await this.passwordEncoder.encode(password)
         await this.userRepository.updatePassword(email, newPassword)
+        await this.userRepository.updateCode(email)
       } else {
         throw createHttpError(400, 'Code Invalid')
       }
     } else {
       throw createHttpError(404, 'Data Not Found')
     }
-    return true
+  }
+
+  async checkCvDownloadAuthorization (requestedId: string, requesterId: string): Promise<string> {
+    const idList = await this.userRepository.getIndividualRegisteredOrganizationId(requestedId)
+    if (idList !== 0) {
+      for (let i = 0; i < idList.length; i++) {
+        console.log(idList[i].job.organization.id)
+        if (requesterId === idList[i].job.organization.id) {
+          return requestedId
+        }
+      }
+    }
+
+    throw createHttpError(403, 'No Privilege')
   }
 }
 

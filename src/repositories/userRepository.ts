@@ -39,6 +39,7 @@ class UserRepository {
       where: { email },
       update: {
         code,
+        isValid: true,
         createdAt,
         expireAt
       },
@@ -49,8 +50,18 @@ class UserRepository {
           }
         },
         code,
+        isValid: true,
         createdAt,
         expireAt
+      }
+    })
+  }
+
+  async updateCode (email: string): Promise<void> {
+    await this.prisma.token.update({
+      where: { email },
+      data: {
+        isValid: false
       }
     })
   }
@@ -65,6 +76,21 @@ class UserRepository {
     await this.prisma.user.update({
       where: { email },
       data: { password }
+    })
+  }
+
+  async getIndividualRegisteredOrganizationId (individualId: string): Promise<any> {
+    return this.prisma.registration.findMany({
+      where: { individualId },
+      select: {
+        job: {
+          select: {
+            organization: {
+              select: { id: true }
+            }
+          }
+        }
+      }
     })
   }
 }

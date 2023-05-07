@@ -1,6 +1,6 @@
 import { type Job, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { addJobSchema, updateJobSchema } from './validation/jobSchema'
+import { addJobSchema, updateJobSchema } from '../middleware/validation/jobSchema'
 import OrganizationService from '../services/organizationService'
 import JobService from '../services/jobService'
 

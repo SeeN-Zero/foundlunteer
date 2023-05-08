@@ -1,18 +1,20 @@
 import { type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import OrganizationService from '../services/organizationService'
-import UserService from '../services/userService'
+import {
+  isOrganizationValidation,
+  getOrganizationJobByIdService,
+  updateOrganizationService,
+  getJobDetailService
+} from '../services/organizationService'
+import { updateUserService } from '../services/userService'
 import { type NextFunction, type Request, type Response } from 'express'
 
-const organizationService = new OrganizationService()
-const userService = new UserService()
-
-async function getOrganizationJob (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function getOrganizationJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user !== undefined) {
       const { id: organizationId, role }: { id: string, role: Role } = req.user
-      await organizationService.isOrganizationValidation(role)
-      const organization = await organizationService.getOrganizationJobById(organizationId)
+      await isOrganizationValidation(role)
+      const organization = await getOrganizationJobByIdService(organizationId)
       res.status(200).json(organization)
     }
   } catch (error: any) {
@@ -24,11 +26,11 @@ async function getOrganizationJob (req: Request, res: Response, next: NextFuncti
   }
 }
 
-async function updateOrganization (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function updateOrganizationController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user !== undefined) {
       const { id: organizationId, role }: { id: string, role: Role } = req.user
-      await organizationService.isOrganizationValidation(role)
+      await isOrganizationValidation(role)
       const user = {
         name: req.body.name,
         address: req.body.address,
@@ -38,8 +40,8 @@ async function updateOrganization (req: Request, res: Response, next: NextFuncti
         leader: req.body.leader,
         description: req.body.description
       }
-      await userService.updateUser(organizationId, user)
-      await organizationService.updateOrganization(organizationId, organization)
+      await updateUserService(organizationId, user)
+      await updateOrganizationService(organizationId, organization)
       res.status(200).json({ message: 'success' })
     }
   } catch (error: any) {
@@ -51,12 +53,12 @@ async function updateOrganization (req: Request, res: Response, next: NextFuncti
   }
 }
 
-async function getJobDetail (req: Request, res: Response, next: NextFunction): Promise<any> {
+async function getJobDetailController (req: Request, res: Response, next: NextFunction): Promise<any> {
   try {
     if (req.user !== undefined) {
       const { id: organizationId, role }: { id: string, role: Role } = req.user
-      await organizationService.isOrganizationValidation(role)
-      const detail = await organizationService.getJobDetail(organizationId, req.params.jobId)
+      await isOrganizationValidation(role)
+      const detail = await getJobDetailService(organizationId, req.params.jobId)
       res.status(200).json(detail[0])
     }
   } catch (error: any) {
@@ -68,4 +70,8 @@ async function getJobDetail (req: Request, res: Response, next: NextFunction): P
   }
 }
 
-export { getOrganizationJob, updateOrganization, getJobDetail }
+export {
+  getOrganizationJobController,
+  updateOrganizationController,
+  getJobDetailController
+}

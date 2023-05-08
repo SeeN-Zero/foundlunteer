@@ -1,95 +1,95 @@
-import { type Job, type Role } from '@prisma/client'
 import createHttpError from 'http-errors'
-import { addJobSchema, updateJobSchema } from '../middleware/validation/jobSchema'
-import OrganizationService from '../services/organizationService'
-import JobService from '../services/jobService'
+import { isOrganizationValidation } from '../services/organizationService'
+import {
+  addJobService,
+  getJobByIdService,
+  getAllJobService,
+  updateJobService,
+  deleteJobService
+} from '../services/jobService'
+import { type NextFunction, type Request, type Response } from 'express'
 
-class JobController {
-  organizationService = new OrganizationService()
-  jobService = new JobService()
-
-  async validateJob (body: any): Promise<void> {
-    try {
-      await addJobSchema.validateAsync(body)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
+async function addJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role } = req.user
+      await isOrganizationValidation(role)
+      await addJobService(req.body, organizationId)
+      res.status(200).json({ message: 'success' })
     }
-  }
-
-  async validateUpdate (body: any): Promise<void> {
-    try {
-      await updateJobSchema.validateAsync(body)
-    } catch (error: any) {
-      throw createHttpError(400, error.message)
-    }
-  }
-
-  async addJob (job: Job, payload: any): Promise<void> {
-    try {
-      const { id: organizationId, role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.addJob(job, organizationId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async getAllJob (query: any): Promise<any> {
-    try {
-      const { page, limit, title } = query
-      return await this.jobService.getAllJob(page, limit, title)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async getJobById (params: any): Promise<any> {
-    try {
-      const { jobId } = params
-      return await this.jobService.getJobById(jobId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async updateJob (jobId: string, job: Job, payload: any): Promise<void> {
-    try {
-      const { id: organizationId, role }: { id: string, role: Role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.updateJob(jobId, job, organizationId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
-    }
-  }
-
-  async deleteJob (jobId: string, payload: any): Promise<void> {
-    try {
-      const { id: organizationId, role }: { id: string, role: Role } = payload
-      await this.organizationService.isOrganizationValidation(role)
-      await this.jobService.deleteJob(jobId, organizationId)
-    } catch (error: any) {
-      if (error.status === null || error.status === undefined) {
-        throw createHttpError(500, error.message)
-      } else {
-        throw error
-      }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
     }
   }
 }
-export default JobController
+
+async function getAllJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const allJob = await getAllJobService(req.query)
+    res.status(200).json(allJob)
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function getJobByIdController (req: Request, res: Response, next: NextFunction): Promise<any> {
+  try {
+    const { jobId } = req.params
+    const job = await getJobByIdService(jobId)
+    res.status(200).json(job)
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function updateJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role } = req.user
+      await isOrganizationValidation(role)
+      await updateJobService(req.params.jobId, req.body, organizationId)
+      res.status(200).json({ message: 'success' })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function deleteJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role } = req.user
+      await isOrganizationValidation(role)
+      await deleteJobService(req.params.jobId, organizationId)
+      res.status(200).json({ message: 'success' })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+export {
+  addJobController,
+  getAllJobController,
+  getJobByIdController,
+  updateJobController,
+  deleteJobController
+}

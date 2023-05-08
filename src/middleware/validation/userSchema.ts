@@ -20,4 +20,8 @@ const forgotPasswordSchema = Joi.object({
   password: Joi.string().min(7).required()
 })
 
-export { addUserSchema, loginUserSchema, forgotPasswordSchema }
+const changePasswordSchema = Joi.object({
+  password: Joi.string().min(7).required()
+})
+
+export { addUserSchema, loginUserSchema, forgotPasswordSchema, changePasswordSchema }

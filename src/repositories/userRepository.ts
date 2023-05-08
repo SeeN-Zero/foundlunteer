@@ -1,98 +1,97 @@
 import { type User, PrismaClient, type Token } from '@prisma/client'
 
-class UserRepository {
-  prisma = new PrismaClient()
-  // async getUser (userId: string): Promise<any> {
-  //   return this.prisma.user.findUniqueOrThrow({
-  //     where: {
-  //       id: userId
-  //     },
-  //     select: {
-  //       id: true,
-  //       email: true,
-  //       name: true,
-  //       address: true,
-  //       phone: true
-  //     }
-  //   })
-  // }
+const prisma = new PrismaClient()
+async function getUserByEmail (email: string): Promise<User | null> {
+  return prisma.user.findUnique({
+    where: {
+      email
+    }
+  })
+}
 
-  async getUserByEmail (email: string): Promise<User | null> {
-    return this.prisma.user.findUnique({
-      where: {
-        email
-      }
-    })
-  }
+async function updateUser (id: string, data: any): Promise<any> {
+  return prisma.user.update({
+    where: {
+      id
+    },
+    data
+  })
+}
 
-  async updateUser (id: string, data: any): Promise<any> {
-    return this.prisma.user.update({
-      where: {
-        id
+async function createCode (email: string, code: number, createdAt: any, expireAt: any): Promise<void> {
+  await prisma.token.upsert({
+    where: { email },
+    update: {
+      code,
+      isValid: true,
+      createdAt,
+      expireAt
+    },
+    create: {
+      userEmail: {
+        connect: {
+          email
+        }
       },
-      data
-    })
-  }
+      code,
+      isValid: true,
+      createdAt,
+      expireAt
+    }
+  })
+}
 
-  async createCode (email: string, code: number, createdAt: any, expireAt: any): Promise<void> {
-    await this.prisma.token.upsert({
-      where: { email },
-      update: {
-        code,
-        isValid: true,
-        createdAt,
-        expireAt
-      },
-      create: {
-        userEmail: {
-          connect: {
-            email
-          }
-        },
-        code,
-        isValid: true,
-        createdAt,
-        expireAt
-      }
-    })
-  }
+async function updateCode (email: string): Promise<void> {
+  await prisma.token.update({
+    where: { email },
+    data: {
+      isValid: false
+    }
+  })
+}
 
-  async updateCode (email: string): Promise<void> {
-    await this.prisma.token.update({
-      where: { email },
-      data: {
-        isValid: false
-      }
-    })
-  }
+async function getCode (email: string): Promise<Token | null> {
+  return prisma.token.findUnique({
+    where: { email }
+  })
+}
 
-  async getCode (email: string): Promise<Token | null> {
-    return this.prisma.token.findUnique({
-      where: { email }
-    })
-  }
+async function updatePasswordUsingEmail (email: string, password: string): Promise<void> {
+  await prisma.user.update({
+    where: { email },
+    data: { password }
+  })
+}
 
-  async updatePassword (email: string, password: string): Promise<void> {
-    await this.prisma.user.update({
-      where: { email },
-      data: { password }
-    })
-  }
+async function updatePasswordUsingId (id: string, password: string): Promise<void> {
+  await prisma.user.update({
+    where: { id },
+    data: { password }
+  })
+}
 
-  async getIndividualRegisteredOrganizationId (individualId: string): Promise<any> {
-    return this.prisma.registration.findMany({
-      where: { individualId },
-      select: {
-        job: {
-          select: {
-            organization: {
-              select: { id: true }
-            }
+async function getIndividualRegisteredOrganizationId (individualId: string): Promise<any> {
+  return prisma.registration.findMany({
+    where: { individualId },
+    select: {
+      job: {
+        select: {
+          organization: {
+            select: { id: true }
           }
         }
       }
-    })
-  }
+    }
+  })
 }
 
-export default UserRepository
+export {
+  getUserByEmail,
+  updateUser,
+  createCode,
+  updateCode,
+  getCode,
+  updatePasswordUsingEmail,
+  updatePasswordUsingId,
+  getIndividualRegisteredOrganizationId
+}

@@ -1,19 +1,17 @@
 import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
 
-class PasswordEncoder {
-  async encode (password: string): Promise<string> {
-    return await bcrypt.hash(password, 10)
-  }
+async function encode (password: string): Promise<string> {
+  return await bcrypt.hash(password, 10)
+}
 
-  async compare (password: string, passwordHash: string): Promise<boolean> {
-    const result: boolean = await bcrypt.compare(password, passwordHash)
-    if (!result) {
-      throw createHttpError(401, 'Incorrect Email Or Password')
-    } else {
-      return result
-    }
+async function compare (password: string, passwordHash: string): Promise<boolean> {
+  const result: boolean = await bcrypt.compare(password, passwordHash)
+  if (!result) {
+    throw createHttpError(401, 'Incorrect Email Or Password')
+  } else {
+    return result
   }
 }
 
-export default PasswordEncoder
+export { encode, compare }

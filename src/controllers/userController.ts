@@ -1,16 +1,23 @@
 import createHttpError from 'http-errors'
-import UserService from '../services/userService'
+import {
+  addUserService,
+  loginUserService,
+  getUserByEmailService,
+  getUserService,
+  sendEmailForgotPasswordService,
+  changeForgotPasswordService,
+  changePasswordService,
+  checkDownloadAuthorizationService
+} from '../services/userService'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 import { type NextFunction, type Request, type Response } from 'express'
-import { upload } from '../services/Configuration/multer'
+import { uploadFile, uploadImage } from '../services/Configuration/multer'
 
-const userService = new UserService()
-
-async function addUser (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function addUserController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     req.body.role = req.body.role.toUpperCase()
-    await userService.addUser(req.body)
+    await addUserService(req.body)
     res.status(200).json({ message: 'success' })
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {
@@ -22,10 +29,10 @@ async function addUser (req: Request, res: Response, next: NextFunction): Promis
 }
 
 // TODO : Add Barrier For Email Activation
-async function loginUser (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function loginUserController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const user = await userService.getUserByEmail(req.body.email)
-    const token = await userService.loginUser(user, req.body)
+    const user = await getUserByEmailService(req.body.email)
+    const token = await loginUserService(user, req.body)
     res.status(200).json(token)
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {
@@ -36,11 +43,11 @@ async function loginUser (req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
-async function getUser (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function getUserController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user !== undefined) {
       const { id, role } = req.user
-      const userRes = await userService.getUser(id, role)
+      const userRes = await getUserService(id, role)
       res.status(200).json(userRes)
     }
   } catch (error: any) {
@@ -52,8 +59,8 @@ async function getUser (req: Request, res: Response, next: NextFunction): Promis
   }
 }
 
-function uploadUserFile (req: Request, res: Response, next: NextFunction): void {
-  upload(req, res, function (error) {
+function uploadUserImageController (req: Request, res: Response, next: NextFunction): void {
+  uploadImage(req, res, function (error) {
     if (error !== undefined) {
       next(error)
     }
@@ -61,7 +68,16 @@ function uploadUserFile (req: Request, res: Response, next: NextFunction): void 
   })
 }
 
-async function getUserImage (req: Request, res: Response): Promise<void> {
+function uploadUserFileController (req: Request, res: Response, next: NextFunction): void {
+  uploadFile(req, res, function (error) {
+    if (error !== undefined) {
+      next(error)
+    }
+    res.status(200).json({ message: 'success' })
+  })
+}
+
+async function getUserImageController (req: Request, res: Response): Promise<void> {
   if (req.user !== undefined) {
     const { id } = req.user
     const _dirname = dirname(fileURLToPath(import.meta.url))
@@ -74,17 +90,13 @@ async function getUserImage (req: Request, res: Response): Promise<void> {
   }
 }
 
-async function getUserCv (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function getUserCvController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user !== undefined) {
-      let id: string
-      if (req.params.userId !== undefined && req.params.userId !== req.user.id) {
-        id = await userService.checkCvDownloadAuthorization(req.params.userId, req.user.id)
-      } else {
-        id = req.user.id
-      }
+      const { id } = req.user
+      const finalId = await checkDownloadAuthorizationService(req.params.userId, id)
       const _dirname = dirname(fileURLToPath(import.meta.url))
-      const imagePath = path.join(_dirname, '../storage/cv', id + '.pdf')
+      const imagePath = path.join(_dirname, '../storage/cv', finalId + '.pdf')
       res.download(imagePath, (error) => {
         if (error !== undefined) {
           res.status(404).json({ message: 'CV Not Found' })
@@ -100,11 +112,55 @@ async function getUserCv (req: Request, res: Response, next: NextFunction): Prom
   }
 }
 
-async function sendCode (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function getUserIjazahController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const user = await userService.getUserByEmail(req.body.email)
+    if (req.user !== undefined) {
+      const { id } = req.user
+      const finalId = await checkDownloadAuthorizationService(req.params.userId, id)
+      const _dirname = dirname(fileURLToPath(import.meta.url))
+      const imagePath = path.join(_dirname, '../storage/Ijazah', finalId + '.pdf')
+      res.download(imagePath, (error) => {
+        if (error !== undefined) {
+          res.status(404).json({ message: 'Ijazah Not Found' })
+        }
+      })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function getUserSertifikatController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id } = req.user
+      const finalId = await checkDownloadAuthorizationService(req.params.userId, id)
+      const _dirname = dirname(fileURLToPath(import.meta.url))
+      const imagePath = path.join(_dirname, '../storage/sertifikat', finalId + '.pdf')
+      res.download(imagePath, (error) => {
+        if (error !== undefined) {
+          res.status(404).json({ message: 'Sertifikat Not Found' })
+        }
+      })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function sendCodeController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    const user = await getUserByEmailService(req.body.email)
     if (user !== null) {
-      await userService.sendEmailForgotPassword(req.body.email)
+      await sendEmailForgotPasswordService(req.body.email)
     }
     res.status(200).json({ message: 'success' })
   } catch (error: any) {
@@ -116,11 +172,28 @@ async function sendCode (req: Request, res: Response, next: NextFunction): Promi
   }
 }
 
-async function forgotPassword (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function forgotPasswordController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const { email, code, password } = req.body
-    await userService.changePassword(email, code, password)
+    await changeForgotPasswordService(email, code, password)
     res.status(200).json({ message: 'success' })
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function changePasswordController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id } = req.user
+      const { password } = req.body
+      await changePasswordService(id, password)
+      res.status(200).json({ message: 'success' })
+    }
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {
       next(createHttpError(500, error.message))
@@ -131,12 +204,16 @@ async function forgotPassword (req: Request, res: Response, next: NextFunction):
 }
 
 export {
-  addUser,
-  loginUser,
-  getUser,
-  uploadUserFile,
-  getUserImage,
-  getUserCv,
-  sendCode,
-  forgotPassword
+  addUserController,
+  loginUserController,
+  getUserController,
+  uploadUserImageController,
+  uploadUserFileController,
+  getUserImageController,
+  getUserCvController,
+  getUserIjazahController,
+  getUserSertifikatController,
+  sendCodeController,
+  forgotPasswordController,
+  changePasswordController
 }

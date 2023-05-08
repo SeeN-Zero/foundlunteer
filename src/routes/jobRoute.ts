@@ -1,82 +1,19 @@
-import express, { type NextFunction, type Request, type Response } from 'express'
-import passport from 'passport'
-import JobController from '../controllers/jobController'
+import express, { type RequestHandler } from 'express'
+import { authentication } from '../middleware/authentication'
+import { validateJob, validateJobUpdate } from '../middleware/validation'
+import {
+  addJobController,
+  getAllJobController,
+  getJobByIdController,
+  updateJobController,
+  deleteJobController
+} from '../controllers/jobController'
 const router = express.Router()
 
-const jobController = new JobController()
-
-router.post('/add',
-  passport.authenticate('jwt', { session: false }),
-  (req: Request, res: Response, next: NextFunction) => {
-    jobController.validateJob(req.body)
-      .then(async () => {
-        next()
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  }
-  , (req: Request, res: Response, next: NextFunction) => {
-    jobController.addJob(req.body, req.user)
-      .then(async () => {
-        res.status(200).json({ message: 'success' })
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  })
-
-router.get('/getAll', passport.authenticate('jwt', { session: false }), (req: Request, res: Response, next: NextFunction) => {
-  jobController.getAllJob(req.query)
-    .then(async (result) => {
-      res.status(200).json(result)
-    })
-    .catch(async (error) => {
-      next(error)
-    })
-})
-
-router.get('/get/:jobId', passport.authenticate('jwt', { session: false }), (req: Request, res: Response, next: NextFunction) => {
-  jobController.getJobById(req.params)
-    .then(async (result) => {
-      res.status(200).json(result)
-    })
-    .catch(async (error) => {
-      next(error)
-    })
-})
-
-router.post('/update/:jobId',
-  passport.authenticate('jwt', { session: false }),
-  (req: Request, res: Response, next: NextFunction) => {
-    jobController.validateUpdate(req.body)
-      .then(async () => {
-        next()
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  },
-  (req: Request, res: Response, next: NextFunction) => {
-    jobController.updateJob(req.params.jobId, req.body, req.user)
-      .then(async () => {
-        res.status(200).json({ message: 'success' })
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  })
-
-router.post('/delete/:jobId',
-  passport.authenticate('jwt', { session: false }),
-  (req: Request, res: Response, next: NextFunction) => {
-    jobController.deleteJob(req.params.jobId, req.user)
-      .then(async () => {
-        res.status(200).json({ message: 'success' })
-      })
-      .catch(async (error) => {
-        next(error)
-      })
-  })
+router.post('/add', authentication, validateJob, addJobController as RequestHandler)
+router.get('/getAll', authentication, getAllJobController as RequestHandler)
+router.get('/get/:jobId', authentication, getJobByIdController as RequestHandler)
+router.post('/update/:jobId', authentication, validateJobUpdate, updateJobController as RequestHandler)
+router.post('/delete/:jobId', authentication, deleteJobController as RequestHandler)
 
 export default router

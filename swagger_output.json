@@ -1,9 +1,9 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.1.1",
+    "version": "2.3.1",
     "title": "FOUNDLUNTEER API",
-    "description": "v2.0.0\n-Change Database Relation\n\nv2.1.1\n-Add Forgot Password Feature\n-Fix Error Send Email\n\nv2.2.0\n-Add Barier for download CV\n-Fix Forgot Password Bug"
+    "description": "https://github.com/SeeN-Zero/foundlunteer"
   },
   "host": "aws.senna-annaba.my.id",
   "basePath": "/",

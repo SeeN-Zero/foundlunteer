@@ -35,7 +35,8 @@ async function getAllJob (take: number | undefined, skip: number | undefined, fi
               email: true,
               name: true,
               address: true,
-              phone: true
+              phone: true,
+              role: true
             }
           },
           leader: true,
@@ -65,7 +66,8 @@ async function getJobById (jobId: string): Promise<any> {
               email: true,
               name: true,
               address: true,
-              phone: true
+              phone: true,
+              role: true
             }
           },
           leader: true,

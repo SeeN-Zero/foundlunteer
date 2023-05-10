@@ -28,7 +28,8 @@ async function getIndividualById (individualId: string): Promise<any> {
           email: true,
           name: true,
           address: true,
-          phone: true
+          phone: true,
+          role: true
         }
       },
       age: true,
@@ -99,7 +100,8 @@ async function getIndividualSavedJob (individualId: string): Promise<any> {
                   email: true,
                   name: true,
                   address: true,
-                  phone: true
+                  phone: true,
+                  role: true
                 }
               },
               leader: true,
@@ -147,7 +149,8 @@ async function getRegisteredJob (individualId: string): Promise<any> {
                       email: true,
                       name: true,
                       address: true,
-                      phone: true
+                      phone: true,
+                      role: true
                     }
                   },
                   leader: true,

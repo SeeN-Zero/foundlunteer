@@ -85,6 +85,17 @@ async function getIndividualRegisteredOrganizationId (individualId: string): Pro
   })
 }
 
+async function updateImageStatus (individualId: string, image: boolean | null): Promise<void> {
+  await prisma.user.update({
+    where: {
+      id: individualId
+    },
+    data: {
+      image
+    }
+  })
+}
+
 export {
   getUserByEmail,
   updateUser,
@@ -93,5 +104,6 @@ export {
   getCode,
   updatePasswordUsingEmail,
   updatePasswordUsingId,
-  getIndividualRegisteredOrganizationId
+  getIndividualRegisteredOrganizationId,
+  updateImageStatus
 }

@@ -59,4 +59,5 @@ const uploadFile = multer({ limits: { fileSize: 5242880 }, fileFilter, storage }
 
 const uploadImage = multer({ limits: { fileSize: 5242880 }, fileFilter: imageFilter, storage })
   .single('image')
+
 export { uploadFile, uploadImage }

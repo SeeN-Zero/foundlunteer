@@ -7,7 +7,7 @@ import {
   sendEmailForgotPasswordService,
   changeForgotPasswordService,
   changePasswordService,
-  checkDownloadAuthorizationService
+  checkDownloadAuthorizationService, updateStatusImageService
 } from '../services/userService'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
@@ -60,21 +60,16 @@ async function getUserController (req: Request, res: Response, next: NextFunctio
 }
 
 function uploadUserImageController (req: Request, res: Response, next: NextFunction): void {
-  uploadImage(req, res, function (error) {
-    if (error !== undefined) {
-      next(error)
-    }
-    res.status(200).json({ message: 'success' })
-  })
-}
-
-function uploadUserFileController (req: Request, res: Response, next: NextFunction): void {
-  uploadFile(req, res, function (error) {
-    if (error !== undefined) {
-      next(error)
-    }
-    res.status(200).json({ message: 'success' })
-  })
+  if (req.user !== undefined) {
+    const { id } = req.user
+    uploadImage(req, res, function (error) {
+      if (error !== undefined) {
+        next(error)
+      }
+      updateStatusImageService(id)
+      res.status(200).json({ message: 'success' })
+    })
+  }
 }
 
 async function getUserImageController (req: Request, res: Response): Promise<void> {
@@ -208,7 +203,6 @@ export {
   loginUserController,
   getUserController,
   uploadUserImageController,
-  uploadUserFileController,
   getUserImageController,
   getUserCvController,
   getUserIjazahController,

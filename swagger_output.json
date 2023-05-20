@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.3.1",
+    "version": "2.3.2",
     "title": "FOUNDLUNTEER API",
     "description": "https://github.com/SeeN-Zero/foundlunteer"
   },
@@ -328,58 +328,6 @@
             "in": "formData",
             "name": "image",
             "description": "jpg/jpeg/png",
-            "type": "file"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "message": {
-                  "type": "string"
-                }
-              }
-            }
-          }
-        }
-      }
-    },
-    "/user/file": {
-      "post": {
-        "tags": [
-          "User"
-        ],
-        "summary": "Add Individual or Organization Image Profile",
-        "consumes": [
-          "multipart/form-data"
-        ],
-        "produces": [
-          "application/json"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "parameters": [
-          {
-            "in": "formData",
-            "name": "cv",
-            "description": "pdf",
-            "type": "file"
-          },
-          {
-            "in": "formData",
-            "name": "ijazah",
-            "description": "pdf",
-            "type": "file"
-          },
-          {
-            "in": "formData",
-            "name": "sertifikat",
-            "description": "pdf",
             "type": "file"
           }
         ],
@@ -964,6 +912,58 @@
           },
           "403": {
             "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/individual/file": {
+      "post": {
+        "tags": [
+          "Individual"
+        ],
+        "summary": "Add Individual Cv/Ijazah/Sertifikat",
+        "consumes": [
+          "multipart/form-data"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "parameters": [
+          {
+            "in": "formData",
+            "name": "cv",
+            "description": "pdf",
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "ijazah",
+            "description": "pdf",
+            "type": "file"
+          },
+          {
+            "in": "formData",
+            "name": "sertifikat",
+            "description": "pdf",
+            "type": "file"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
             "schema": {
               "type": "object",
               "properties": {

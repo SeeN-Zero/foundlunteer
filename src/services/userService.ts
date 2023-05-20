@@ -13,8 +13,12 @@ import {
   getCode,
   updatePasswordUsingEmail,
   updatePasswordUsingId,
-  getIndividualRegisteredOrganizationId
+  getIndividualRegisteredOrganizationId,
+  updateImageStatus
 } from '../repositories/userRepository'
+import path, { dirname } from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
 
 async function addUserService (user: User): Promise<void> {
   user.password = await encode(user.password)
@@ -97,7 +101,6 @@ async function checkDownloadAuthorizationService (requestedId: string, requester
     const idList = await getIndividualRegisteredOrganizationId(requestedId)
     if (idList !== 0) {
       for (let i = 0; i < idList.length; i++) {
-        console.log(idList[i].job.organization.id)
         if (requesterId === idList[i].job.organization.id) {
           return requestedId
         }
@@ -113,6 +116,21 @@ async function changePasswordService (id: string, newPassword: string): Promise<
   await updatePasswordUsingId(id, newPassword)
 }
 
+function updateStatusImageService (individualId: string): void {
+  const _dirname = dirname(fileURLToPath(import.meta.url))
+  let image
+  const filePathCv = path.join(_dirname, '../storage/image', individualId + '.png')
+  if (fs.existsSync(filePathCv)) {
+    image = true
+  } else {
+    image = null
+  }
+  updateImageStatus(individualId, image)
+    .catch((e) => {
+      throw (e)
+    })
+}
+
 export {
   addUserService,
   loginUserService,
@@ -122,5 +140,6 @@ export {
   sendEmailForgotPasswordService,
   changeForgotPasswordService,
   checkDownloadAuthorizationService,
-  changePasswordService
+  changePasswordService,
+  updateStatusImageService
 }

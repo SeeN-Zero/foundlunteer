@@ -4,7 +4,6 @@ import {
   loginUserController,
   getUserController,
   uploadUserImageController,
-  uploadUserFileController,
   getUserImageController,
   getUserCvController,
   sendCodeController,
@@ -22,7 +21,6 @@ router.post('/add', validateUser, addUserController as RequestHandler)
 router.post('/login', validateLogin, loginUserController as RequestHandler)
 router.get('/get', authentication, getUserController as RequestHandler)
 router.post('/image', authentication, uploadUserImageController as RequestHandler)
-router.post('/file', authentication, uploadUserFileController as RequestHandler)
 router.get('/getimage/:userId?', authentication, getUserImageController as RequestHandler)
 router.get('/getcv/:userId?', authentication, getUserCvController as RequestHandler)
 router.get('/getijazah/:userId?', authentication, getUserIjazahController as RequestHandler)

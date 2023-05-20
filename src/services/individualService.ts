@@ -8,8 +8,13 @@ import {
   checkSavedJob,
   getIndividualSavedJob,
   registerJob,
-  getRegisteredJob
+  getRegisteredJob,
+  updateFileStatus,
+  getIndividualFileStatus
 } from '../repositories/individualRepository'
+import path, { dirname } from 'path'
+import { fileURLToPath } from 'url'
+import fs from 'fs'
 
 async function isIndividualValidation (role: string): Promise<void> {
   if (role !== Role.INDIVIDUAL) {
@@ -57,10 +62,14 @@ async function getIndividualSavedJobService (individualId: string): Promise<any>
 
 async function registerIndividualToJobService (individualId: string, jobId: string): Promise<void> {
   const individual = await getIndividualById(individualId)
-  const notNull = Object.values(individual).every((property) => {
+  const individualFile = await getIndividualFileStatus(individualId)
+  const notNullData = Object.values(individual).every((property) => {
     return property !== null
   })
-  if (notNull) {
+  const notNullFile = Object.values(individualFile).every((property) => {
+    return property !== null
+  })
+  if (notNullData && notNullFile) {
     await registerJob(individualId, jobId)
       .catch((e) => {
         if (e.code === 'P2002') {
@@ -78,11 +87,39 @@ async function getIndividualRegisteredJobService (individualId: string): Promise
   return await getRegisteredJob(individualId)
 }
 
+function updateStatusFileService (individualId: string): void {
+  const _dirname = dirname(fileURLToPath(import.meta.url))
+  let cv, ijazah, sertifikat
+  const filePathCv = path.join(_dirname, '../storage/cv', individualId + '.pdf')
+  const filePathIjazah = path.join(_dirname, '../storage/ijazah', individualId + '.pdf')
+  const filePathSertifikat = path.join(_dirname, '../storage/sertifikat', individualId + '.pdf')
+  if (fs.existsSync(filePathCv)) {
+    cv = true
+  } else {
+    cv = null
+  }
+  if (fs.existsSync(filePathIjazah)) {
+    ijazah = true
+  } else {
+    ijazah = null
+  }
+  if (fs.existsSync(filePathSertifikat)) {
+    sertifikat = true
+  } else {
+    sertifikat = null
+  }
+  updateFileStatus(individualId, cv, ijazah, sertifikat)
+    .catch((e) => {
+      throw (e)
+    })
+}
+
 export {
   isIndividualValidation,
   updateIndividualService,
   saveOrDeleteJobService,
   getIndividualSavedJobService,
   registerIndividualToJobService,
-  getIndividualRegisteredJobService
+  getIndividualRegisteredJobService,
+  updateStatusFileService
 }

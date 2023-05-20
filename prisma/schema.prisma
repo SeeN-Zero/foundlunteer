@@ -18,6 +18,7 @@ model User {
   address      String
   phone        String
   role         Role
+  image        Boolean?
   Individual   Individual?   @relation("UserIndividual")
   Organization Organization? @relation("UserOrganization")
   token        Token?        @relation("UserToken")
@@ -40,6 +41,9 @@ model Individual {
   age         Int?
   description String?
   social      String?
+  cv          Boolean?
+  ijazah      Boolean?
+  sertifikat  Boolean?
   list        UserList?      @relation("IndividualOnUserList")
   registered  Registration[] @relation("IndividualOnRegistration")
 }

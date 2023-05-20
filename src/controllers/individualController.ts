@@ -5,10 +5,12 @@ import {
   saveOrDeleteJobService,
   getIndividualSavedJobService,
   registerIndividualToJobService,
-  getIndividualRegisteredJobService
+  getIndividualRegisteredJobService,
+  updateStatusFileService
 } from '../services/individualService'
 import { updateUserService } from '../services/userService'
 import { type NextFunction, type Request, type Response } from 'express'
+import { uploadFile } from '../services/Configuration/multer'
 
 async function updateIndividualController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -106,10 +108,25 @@ async function getIndividualRegisteredJobController (req: Request, res: Response
   }
 }
 
+async function uploadUserFileController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  if (req.user !== undefined) {
+    const { id: individualId, role } = req.user
+    await isIndividualValidation(role)
+    uploadFile(req, res, function (error): void {
+      if (error !== undefined) {
+        next(error)
+      }
+      updateStatusFileService(individualId)
+      res.status(200).json({ message: 'success' })
+    })
+  }
+}
+
 export {
   updateIndividualController,
   saveOrDeleteJobController,
   getIndividualRegisteredJobController,
   registerIndividualJobController,
-  getIndividualSavedJobController
+  getIndividualSavedJobController,
+  uploadUserFileController
 }

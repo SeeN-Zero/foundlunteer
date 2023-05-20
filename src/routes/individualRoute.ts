@@ -4,7 +4,8 @@ import {
   saveOrDeleteJobController,
   getIndividualRegisteredJobController,
   registerIndividualJobController,
-  getIndividualSavedJobController
+  getIndividualSavedJobController,
+  uploadUserFileController
 } from '../controllers/individualController'
 import { authentication } from '../middleware/authentication'
 import { validateIndividualUpdate } from '../middleware/validation'
@@ -15,5 +16,6 @@ router.post('/saveordeletejob/:jobId', authentication, saveOrDeleteJobController
 router.get('/savedjob', authentication, getIndividualSavedJobController as RequestHandler)
 router.get('/registeredjob', authentication, getIndividualRegisteredJobController as RequestHandler)
 router.post('/register/:jobId', authentication, registerIndividualJobController as RequestHandler)
+router.post('/file', authentication, uploadUserFileController as RequestHandler)
 
 export default router

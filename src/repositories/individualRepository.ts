@@ -165,6 +165,29 @@ async function getRegisteredJob (individualId: string): Promise<any> {
     }
   })
 }
+async function updateFileStatus (individualId: string, cv: boolean | null, ijazah: boolean | null, sertifikat: boolean | null): Promise<void> {
+  await prisma.individual.update({
+    where: {
+      id: individualId
+    },
+    data: {
+      cv,
+      ijazah,
+      sertifikat
+    }
+  })
+}
+async function getIndividualFileStatus (individualId: string): Promise<any> {
+  return prisma.individual.findUniqueOrThrow({
+    where: {
+      id: individualId
+    },
+    select: {
+      cv: true,
+      ijazah: true
+    }
+  })
+}
 
 export {
   addIndividual,
@@ -175,5 +198,7 @@ export {
   checkSavedJob,
   getIndividualSavedJob,
   registerJob,
-  getRegisteredJob
+  getRegisteredJob,
+  updateFileStatus,
+  getIndividualFileStatus
 }

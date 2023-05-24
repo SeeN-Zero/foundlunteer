@@ -8,7 +8,6 @@ async function getUserByEmail (email: string): Promise<User | null> {
     }
   })
 }
-
 async function updateUser (id: string, data: any): Promise<any> {
   return prisma.user.update({
     where: {
@@ -17,7 +16,6 @@ async function updateUser (id: string, data: any): Promise<any> {
     data
   })
 }
-
 async function createCode (email: string, code: number, createdAt: any, expireAt: any): Promise<void> {
   await prisma.token.upsert({
     where: { email },
@@ -40,7 +38,6 @@ async function createCode (email: string, code: number, createdAt: any, expireAt
     }
   })
 }
-
 async function updateCode (email: string): Promise<void> {
   await prisma.token.update({
     where: { email },
@@ -49,42 +46,33 @@ async function updateCode (email: string): Promise<void> {
     }
   })
 }
-
 async function getCode (email: string): Promise<Token | null> {
   return prisma.token.findUnique({
     where: { email }
   })
 }
-
 async function updatePasswordUsingEmail (email: string, password: string): Promise<void> {
   await prisma.user.update({
     where: { email },
     data: { password }
   })
 }
-
 async function updatePasswordUsingId (id: string, password: string): Promise<void> {
   await prisma.user.update({
     where: { id },
     data: { password }
   })
 }
-
-async function getIndividualRegisteredOrganizationId (individualId: string): Promise<any> {
+async function getIndividualRegisteredOrganizationId (individualId: string, organizationId: string): Promise<any> {
   return prisma.registration.findMany({
-    where: { individualId },
-    select: {
+    where: {
+      individualId,
       job: {
-        select: {
-          organization: {
-            select: { id: true }
-          }
-        }
+        organizationId
       }
     }
   })
 }
-
 async function updateImageStatus (individualId: string, image: boolean | null): Promise<void> {
   await prisma.user.update({
     where: {

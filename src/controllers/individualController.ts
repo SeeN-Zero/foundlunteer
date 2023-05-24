@@ -6,7 +6,8 @@ import {
   getIndividualSavedJobService,
   registerIndividualToJobService,
   getIndividualRegisteredJobService,
-  updateStatusFileService
+  updateStatusFileService,
+  getIndividualFileStatusService
 } from '../services/individualService'
 import { updateUserService } from '../services/userService'
 import { type NextFunction, type Request, type Response } from 'express'
@@ -108,7 +109,7 @@ async function getIndividualRegisteredJobController (req: Request, res: Response
   }
 }
 
-async function uploadUserFileController (req: Request, res: Response, next: NextFunction): Promise<void> {
+async function uploadIndividualFileController (req: Request, res: Response, next: NextFunction): Promise<void> {
   if (req.user !== undefined) {
     const { id: individualId, role } = req.user
     await isIndividualValidation(role)
@@ -122,11 +123,29 @@ async function uploadUserFileController (req: Request, res: Response, next: Next
   }
 }
 
+async function checkIndividualFileController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: individualId, role } = req.user
+      await isIndividualValidation(role)
+      const result = await getIndividualFileStatusService(individualId)
+      res.status(200).json(result)
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
 export {
   updateIndividualController,
   saveOrDeleteJobController,
   getIndividualRegisteredJobController,
   registerIndividualJobController,
   getIndividualSavedJobController,
-  uploadUserFileController
+  uploadIndividualFileController,
+  checkIndividualFileController
 }

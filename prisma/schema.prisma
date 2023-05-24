@@ -37,7 +37,7 @@ model Token {
 
 model Individual {
   id          String         @unique
-  user        User?          @relation(name: "UserIndividual", fields: [id], references: [id])
+  user        User           @relation(name: "UserIndividual", fields: [id], references: [id])
   age         Int?
   description String?
   social      String?
@@ -50,7 +50,7 @@ model Individual {
 
 model Organization {
   id          String  @unique
-  user        User?   @relation(name: "UserOrganization", fields: [id], references: [id])
+  user        User    @relation(name: "UserOrganization", fields: [id], references: [id])
   leader      String?
   description String?
   social      String?

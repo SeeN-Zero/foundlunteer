@@ -19,6 +19,7 @@ import {
 import path, { dirname } from 'path'
 import fs from 'fs'
 import { fileURLToPath } from 'url'
+import { type IndividualDto, type OrganizationDto } from '../dto/userDto'
 
 async function addUserService (user: User): Promise<void> {
   user.password = await encode(user.password)
@@ -55,11 +56,11 @@ async function loginUserService (user: User, login: { email: string, password: s
   }
 }
 
-async function getUserByEmailService (email: string): Promise<any> {
+async function getUserByEmailService (email: string): Promise<User | null> {
   return await getUserByEmail(email)
 }
 
-async function getUserService (id: string, role: Role): Promise<any> {
+async function getUserService (id: string, role: Role): Promise<OrganizationDto | IndividualDto> {
   if (role === Role.INDIVIDUAL) {
     return await getIndividualById(id)
   } else {
@@ -98,13 +99,9 @@ async function changeForgotPasswordService (email: string, code: number, passwor
 
 async function checkDownloadAuthorizationService (requestedId: string, requesterId: string): Promise<string> {
   if (requestedId !== undefined && requestedId !== requesterId) {
-    const idList = await getIndividualRegisteredOrganizationId(requestedId)
-    if (idList !== 0) {
-      for (let i = 0; i < idList.length; i++) {
-        if (requesterId === idList[i].job.organization.id) {
-          return requestedId
-        }
-      }
+    const idList = await getIndividualRegisteredOrganizationId(requestedId, requesterId)
+    if (idList.length !== 0) {
+      return requestedId
     }
     throw createHttpError(403, 'No Privilege')
   } else {

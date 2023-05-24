@@ -4,7 +4,7 @@ import {
   isOrganizationValidation,
   getOrganizationJobByIdService,
   updateOrganizationService,
-  getJobDetailService
+  getJobDetailService, updateRegistrantStatusService
 } from '../services/organizationService'
 import { updateUserService } from '../services/userService'
 import { type NextFunction, type Request, type Response } from 'express'
@@ -53,13 +53,31 @@ async function updateOrganizationController (req: Request, res: Response, next: 
   }
 }
 
-async function getJobDetailController (req: Request, res: Response, next: NextFunction): Promise<any> {
+async function getJobDetailController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     if (req.user !== undefined) {
       const { id: organizationId, role }: { id: string, role: Role } = req.user
       await isOrganizationValidation(role)
       const detail = await getJobDetailService(organizationId, req.params.jobId)
-      res.status(200).json(detail[0])
+      res.status(200).json(detail)
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
+async function updateRegistrantStatusController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role }: { id: string, role: Role } = req.user
+      const { individualId, jobId, registrantStatus } = req.body
+      await isOrganizationValidation(role)
+      await updateRegistrantStatusService(organizationId, jobId, individualId, registrantStatus)
+      res.status(200).json({ message: 'success' })
     }
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {
@@ -73,5 +91,6 @@ async function getJobDetailController (req: Request, res: Response, next: NextFu
 export {
   getOrganizationJobController,
   updateOrganizationController,
-  getJobDetailController
+  getJobDetailController,
+  updateRegistrantStatusController
 }

@@ -9,4 +9,10 @@ const updateOrganizationSchema = Joi.object({
   social: Joi.string()
 })
 
-export { updateOrganizationSchema }
+const updateRegistrantStatusSchema = Joi.object({
+  individualId: Joi.string().required(),
+  jobId: Joi.string().required(),
+  registrantStatus: Joi.string().valid('ONPROCESS', 'REJECTED', 'ACCEPTED').insensitive().required()
+})
+
+export { updateOrganizationSchema, updateRegistrantStatusSchema }

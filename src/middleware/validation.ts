@@ -1,8 +1,8 @@
 import { type NextFunction, type Request, type Response } from 'express'
 import { addUserSchema, changePasswordSchema, forgotPasswordSchema, loginUserSchema } from './validation/userSchema'
 import createHttpError from 'http-errors'
-import { updateOrganizationSchema } from './validation/organizationSchema'
-import { addJobSchema, updateJobSchema } from './validation/jobSchema'
+import { updateOrganizationSchema, updateRegistrantStatusSchema } from './validation/organizationSchema'
+import { addJobSchema, updateJobSchema, updateJobStatusSchema } from './validation/jobSchema'
 import { updateIndividualSchema } from './validation/individualSchema'
 
 function validateUser (req: Request, res: Response, next: NextFunction): void {
@@ -77,6 +77,24 @@ function validateJobUpdate (req: Request, res: Response, next: NextFunction): vo
     })
 }
 
+function validateJobUpdateStatus (req: Request, res: Response, next: NextFunction): void {
+  updateJobStatusSchema.validateAsync(req.body)
+    .then(() => {
+      next()
+    }).catch(error => {
+      next(createHttpError(400, error.message))
+    })
+}
+
+function validateRegistrantUpdateStatus (req: Request, res: Response, next: NextFunction): void {
+  updateRegistrantStatusSchema.validateAsync(req.body)
+    .then(() => {
+      next()
+    }).catch(error => {
+      next(createHttpError(400, error.message))
+    })
+}
+
 export {
   validateUser,
   validateLogin,
@@ -85,5 +103,7 @@ export {
   validateOrganizationUpdate,
   validateIndividualUpdate,
   validateJob,
-  validateJobUpdate
+  validateJobUpdate,
+  validateJobUpdateStatus,
+  validateRegistrantUpdateStatus
 }

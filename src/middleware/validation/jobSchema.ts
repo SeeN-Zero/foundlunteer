@@ -10,4 +10,8 @@ const updateJobSchema = Joi.object({
   description: Joi.string().required()
 })
 
-export { addJobSchema, updateJobSchema }
+const updateJobStatusSchema = Joi.object({
+  jobStatus: Joi.string().valid('OPEN', 'CLOSE').insensitive().required()
+})
+
+export { addJobSchema, updateJobSchema, updateJobStatusSchema }

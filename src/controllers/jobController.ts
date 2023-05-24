@@ -5,7 +5,7 @@ import {
   getJobByIdService,
   getAllJobService,
   updateJobService,
-  deleteJobService
+  deleteJobService, updateJobStatusService
 } from '../services/jobService'
 import { type NextFunction, type Request, type Response } from 'express'
 
@@ -86,10 +86,29 @@ async function deleteJobController (req: Request, res: Response, next: NextFunct
     }
   }
 }
+
+async function updateJobStatusController (req: Request, res: Response, next: NextFunction): Promise<void> {
+  try {
+    if (req.user !== undefined) {
+      const { id: organizationId, role } = req.user
+      await isOrganizationValidation(role)
+      await updateJobStatusService(req.params.jobId, req.body.jobStatus, organizationId)
+      res.status(200).json({ message: 'success' })
+    }
+  } catch (error: any) {
+    if (error.status === null || error.status === undefined) {
+      next(createHttpError(500, error.message))
+    } else {
+      next(error)
+    }
+  }
+}
+
 export {
   addJobController,
   getAllJobController,
   getJobByIdController,
   updateJobController,
-  deleteJobController
+  deleteJobController,
+  updateJobStatusController
 }

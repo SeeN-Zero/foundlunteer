@@ -1,4 +1,6 @@
-import { PrismaClient, type User } from '@prisma/client'
+import { PrismaClient, type RegistrationStatus, type User } from '@prisma/client'
+import { type OrganizationDto } from '../dto/userDto'
+import { type JobDto, type JobRegistrantDto } from '../dto/jobDto'
 
 const prisma = new PrismaClient()
 
@@ -13,8 +15,7 @@ async function addOrganization (user: User): Promise<void> {
     }
   })
 }
-
-async function getOrganizationById (organizationId: string): Promise<any> {
+async function getOrganizationById (organizationId: string): Promise<OrganizationDto> {
   return prisma.organization.findUniqueOrThrow({
     where: {
       id: organizationId
@@ -35,17 +36,15 @@ async function getOrganizationById (organizationId: string): Promise<any> {
     }
   })
 }
-
-async function updateOrganization (id: string, organization: any): Promise<any> {
-  return prisma.organization.update({
+async function updateOrganization (id: string, organization: any): Promise<void> {
+  await prisma.organization.update({
     where: {
       id
     },
     data: organization
   })
 }
-
-async function getJob (organizationId: string): Promise<any> {
+async function getJob (organizationId: string): Promise<{ job: JobDto[] }> {
   return prisma.organization.findUniqueOrThrow({
     where: {
       id: organizationId
@@ -60,15 +59,31 @@ async function getJob (organizationId: string): Promise<any> {
           title: true,
           description: true,
           jobStatus: true,
-          createdAt: true
+          createdAt: true,
+          organizationId: true,
+          organization: {
+            select: {
+              user: {
+                select: {
+                  email: true,
+                  name: true,
+                  address: true,
+                  phone: true,
+                  role: true
+                }
+              },
+              leader: true,
+              description: true,
+              social: true
+            }
+          }
         }
       }
     }
   })
 }
-
-async function getJobDetail (organizationId: string, jobId: string): Promise<any> {
-  return prisma.job.findMany({
+async function getJobDetail (organizationId: string, jobId: string): Promise<JobRegistrantDto> {
+  return prisma.job.findFirstOrThrow({
     where: {
       AND: [
         {
@@ -109,11 +124,56 @@ async function getJobDetail (organizationId: string, jobId: string): Promise<any
     }
   })
 }
+async function getRegistrantStatus (organizationId: string, jobId: string, individualId: string): Promise<any> {
+  return prisma.registration.findMany({
+    where: {
+      jobId,
+      job: {
+        organizationId
+      },
+      individualId
+    }
+  })
+}
+
+async function updateRegistrantStatus (organizationId: string, jobId: string, individualId: string, regsitrantStatus: RegistrationStatus): Promise<void> {
+  await prisma.organization.update({
+    where: {
+      id: organizationId
+    },
+    data: {
+      job: {
+        update: {
+          where: {
+            id: jobId
+          },
+          data: {
+            registrant: {
+              update: {
+                where: {
+                  individualId_jobId: {
+                    individualId,
+                    jobId
+                  }
+                },
+                data: {
+                  registrationStatus: regsitrantStatus
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  })
+}
 
 export {
   addOrganization,
   getOrganizationById,
   updateOrganization,
   getJob,
-  getJobDetail
+  getJobDetail,
+  updateRegistrantStatus,
+  getRegistrantStatus
 }

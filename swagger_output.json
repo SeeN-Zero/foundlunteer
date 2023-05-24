@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.3.2",
+    "version": "2.4.0",
     "title": "FOUNDLUNTEER API",
     "description": "https://github.com/SeeN-Zero/foundlunteer"
   },
@@ -976,6 +976,38 @@
         }
       }
     },
+    "/individual/filestatus": {
+      "get": {
+        "tags": [
+          "Individual"
+        ],
+        "summary": "Get Individual File Status",
+        "produces": [
+          "application/json"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK - Try it out for response"
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/organization/update": {
       "post": {
         "tags": [
@@ -997,8 +1029,8 @@
         "parameters": [
           {
             "in": "body",
-            "name": "Individual",
-            "description": "Add New Individual",
+            "name": "Organization",
+            "description": "Update Organization",
             "schema": {
               "type": "object",
               "properties": {
@@ -1131,6 +1163,86 @@
         }
       }
     },
+    "/organization/updateregistrant": {
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Update Registrant Status",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "body",
+            "name": "Registrant",
+            "description": "Update Registrant",
+            "schema": {
+              "type": "object",
+              "required": [
+                "individualId",
+                "jobId",
+                "registrantStatus"
+              ],
+              "properties": {
+                "individualId": {
+                  "type": "string"
+                },
+                "jobId": {
+                  "type": "string"
+                },
+                "registrantStatus": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/job/add": {
       "post": {
         "tags": [
@@ -1247,6 +1359,85 @@
                   "type": "string"
                 },
                 "description": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/job/updatestatus/{jobId}": {
+      "post": {
+        "tags": [
+          "Organization"
+        ],
+        "summary": "Update Job Status By Organization",
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "consumes": [
+          "application/json"
+        ],
+        "produces": [
+          "application/json"
+        ],
+        "parameters": [
+          {
+            "in": "path",
+            "name": "jobId",
+            "type": "string",
+            "required": true,
+            "description": "Job UUID"
+          },
+          {
+            "in": "body",
+            "name": "Job",
+            "description": "Update Job Status",
+            "schema": {
+              "type": "object",
+              "required": [
+                "jobStatus"
+              ],
+              "properties": {
+                "jobStatus": {
                   "type": "string"
                 }
               }

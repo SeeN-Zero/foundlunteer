@@ -1,4 +1,4 @@
-import { Role } from '@prisma/client'
+import { JobStatus, Role } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
   getIndividualById,
@@ -15,6 +15,9 @@ import {
 import path, { dirname } from 'path'
 import { fileURLToPath } from 'url'
 import fs from 'fs'
+import { type JobDto } from '../dto/jobDto'
+import { type FileStatusDto, type RegisteredDto } from '../dto/userDto'
+import { getJobById } from '../repositories/jobRepository'
 
 async function isIndividualValidation (role: string): Promise<void> {
   if (role !== Role.INDIVIDUAL) {
@@ -28,7 +31,7 @@ async function updateIndividualService (individualId: string, individual: any): 
 
 async function saveOrDeleteJobService (individualId: string, jobId: string): Promise<string> {
   const result = await checkSavedJob(individualId, jobId)
-  if (result.length === 0) {
+  if (result === 0) {
     await saveJob(individualId, jobId)
       .catch((error) => {
         if (error.code === 'P2025') {
@@ -51,40 +54,41 @@ async function saveOrDeleteJobService (individualId: string, jobId: string): Pro
   }
 }
 
-async function getIndividualSavedJobService (individualId: string): Promise<any> {
-  const result = await getIndividualSavedJob(individualId)
-    .catch((e) => {
-      throw e
-    })
-  const { jobs } = result
-  return { job: jobs }
+async function getIndividualSavedJobService (individualId: string): Promise<{ jobs: JobDto[] }> {
+  return getIndividualSavedJob(individualId)
 }
 
 async function registerIndividualToJobService (individualId: string, jobId: string): Promise<void> {
-  const individual = await getIndividualById(individualId)
-  const individualFile = await getIndividualFileStatus(individualId)
-  const notNullData = Object.values(individual).every((property) => {
-    return property !== null
-  })
-  const notNullFile = Object.values(individualFile).every((property) => {
-    return property !== null
-  })
-  if (notNullData && notNullFile) {
-    await registerJob(individualId, jobId)
-      .catch((e) => {
-        if (e.code === 'P2002') {
-          throw createHttpError(400, 'Already registered')
-        } else {
-          throw e
-        }
-      })
+  const job = await getJobById(jobId)
+  if (job.jobStatus === JobStatus.OPEN) {
+    const individual = await getIndividualById(individualId)
+    const individualFile = await getIndividualFileStatus(individualId)
+    delete individualFile.sertifikat
+    const notNullData = Object.values(individual).every((property) => {
+      return property !== null
+    })
+    const notNullFile = Object.values(individualFile).every((property) => {
+      return property !== null
+    })
+    if (notNullData && notNullFile) {
+      await registerJob(individualId, jobId)
+        .catch((e) => {
+          if (e.code === 'P2002') {
+            throw createHttpError(400, 'Already registered')
+          } else {
+            throw e
+          }
+        })
+    } else {
+      throw createHttpError(400, 'Individual data must be complete before registering')
+    }
   } else {
-    throw createHttpError(400, 'Individual data must be complete before registering')
+    throw createHttpError(400, 'Job Already CLOSE')
   }
 }
 
-async function getIndividualRegisteredJobService (individualId: string): Promise<any> {
-  return await getRegisteredJob(individualId)
+async function getIndividualRegisteredJobService (individualId: string): Promise<{ registered: RegisteredDto[] }> {
+  return getRegisteredJob(individualId)
 }
 
 function updateStatusFileService (individualId: string): void {
@@ -114,6 +118,10 @@ function updateStatusFileService (individualId: string): void {
     })
 }
 
+async function getIndividualFileStatusService (individualId: string): Promise<FileStatusDto> {
+  return await getIndividualFileStatus(individualId)
+}
+
 export {
   isIndividualValidation,
   updateIndividualService,
@@ -121,5 +129,6 @@ export {
   getIndividualSavedJobService,
   registerIndividualToJobService,
   getIndividualRegisteredJobService,
-  updateStatusFileService
+  updateStatusFileService,
+  getIndividualFileStatusService
 }

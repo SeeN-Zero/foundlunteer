@@ -1,4 +1,5 @@
-import { PrismaClient, type Job } from '@prisma/client'
+import { PrismaClient, type Job, type JobStatus } from '@prisma/client'
+import { type JobDto } from '../dto/jobDto'
 
 const prisma = new PrismaClient()
 
@@ -7,8 +8,7 @@ async function addJob (job: Job): Promise<void> {
     data: job
   })
 }
-
-async function getAllJob (take: number | undefined, skip: number | undefined, filter: string | undefined): Promise<any> {
+async function getAllJob (take: number | undefined, skip: number | undefined, filter: string | undefined): Promise<JobDto[]> {
   return prisma.job.findMany({
     take,
     skip,
@@ -27,11 +27,11 @@ async function getAllJob (take: number | undefined, skip: number | undefined, fi
       description: true,
       jobStatus: true,
       createdAt: true,
+      organizationId: true,
       organization: {
         select: {
           user: {
             select: {
-              id: true,
               email: true,
               name: true,
               address: true,
@@ -47,9 +47,8 @@ async function getAllJob (take: number | undefined, skip: number | undefined, fi
     }
   })
 }
-
-async function getJobById (jobId: string): Promise<any> {
-  return prisma.job.findUnique({
+async function getJobById (jobId: string): Promise<JobDto> {
+  return prisma.job.findUniqueOrThrow({
     where: {
       id: jobId
     },
@@ -59,6 +58,7 @@ async function getJobById (jobId: string): Promise<any> {
       description: true,
       jobStatus: true,
       createdAt: true,
+      organizationId: true,
       organization: {
         select: {
           user: {
@@ -78,7 +78,6 @@ async function getJobById (jobId: string): Promise<any> {
     }
   })
 }
-
 async function updateJob (job: Job): Promise<{ count: number }> {
   return prisma.job.updateMany({
     where: {
@@ -98,7 +97,6 @@ async function updateJob (job: Job): Promise<{ count: number }> {
     data: job
   })
 }
-
 async function deleteJob (jobId: string, organizationId: string): Promise<{ count: number }> {
   return prisma.job.deleteMany({
     where: {
@@ -116,11 +114,33 @@ async function deleteJob (jobId: string, organizationId: string): Promise<{ coun
     }
   })
 }
+async function updateJobStatus (jobId: string, organizationId: string, jobStatus: JobStatus): Promise<{ count: number }> {
+  return prisma.job.updateMany({
+    where: {
+      AND: [
+        {
+          id: {
+            equals: jobId
+          }
+        },
+        {
+          organizationId: {
+            equals: organizationId
+          }
+        }
+      ]
+    },
+    data: {
+      jobStatus
+    }
+  })
+}
 
 export {
   addJob,
   getAllJob,
   getJobById,
   updateJob,
-  deleteJob
+  deleteJob,
+  updateJobStatus
 }

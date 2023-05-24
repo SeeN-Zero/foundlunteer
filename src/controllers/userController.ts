@@ -12,7 +12,8 @@ import {
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
 import { type NextFunction, type Request, type Response } from 'express'
-import { uploadFile, uploadImage } from '../services/Configuration/multer'
+import { uploadImage } from '../services/Configuration/multer'
+import { type IndividualDto, type OrganizationDto } from '../dto/userDto'
 
 async function addUserController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -32,8 +33,10 @@ async function addUserController (req: Request, res: Response, next: NextFunctio
 async function loginUserController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
     const user = await getUserByEmailService(req.body.email)
-    const token = await loginUserService(user, req.body)
-    res.status(200).json(token)
+    if (user !== null) {
+      const token = await loginUserService(user, req.body)
+      res.status(200).json(token)
+    }
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {
       next(createHttpError(500, error.message))
@@ -47,7 +50,7 @@ async function getUserController (req: Request, res: Response, next: NextFunctio
   try {
     if (req.user !== undefined) {
       const { id, role } = req.user
-      const userRes = await getUserService(id, role)
+      const userRes: IndividualDto | OrganizationDto = await getUserService(id, role)
       res.status(200).json(userRes)
     }
   } catch (error: any) {

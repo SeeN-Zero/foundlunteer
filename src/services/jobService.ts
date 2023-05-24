@@ -1,13 +1,14 @@
-import { type Job } from '@prisma/client'
-import { addJob, deleteJob, getAllJob, getJobById, updateJob } from '../repositories/jobRepository'
+import { type Job, type JobStatus } from '@prisma/client'
+import { addJob, deleteJob, getAllJob, getJobById, updateJob, updateJobStatus } from '../repositories/jobRepository'
 import createHttpError from 'http-errors'
+import { type JobDto } from '../dto/jobDto'
 
 async function addJobService (job: Job, organizationId: string): Promise<void> {
   job.organizationId = organizationId
   await addJob(job)
 }
 
-async function getAllJobService (query: any): Promise<any> {
+async function getAllJobService (query: any): Promise<{ jobs: JobDto[] }> {
   const { page, limit, filter } = query
   let skip: number | undefined
   let limitNum: number | undefined
@@ -22,17 +23,19 @@ async function getAllJobService (query: any): Promise<any> {
   }
   const allJob = await getAllJob(limitNum, skip, filter)
   return {
-    job: allJob
+    jobs: allJob
   }
 }
 
-async function getJobByIdService (jobId: string): Promise<any> {
-  const job = await getJobById(jobId)
-  if (job === null) {
-    throw createHttpError(404, 'Job Not Found')
-  } else {
-    return job
-  }
+async function getJobByIdService (jobId: string): Promise<JobDto> {
+  return getJobById(jobId)
+    .catch((error) => {
+      if (error.code === 'P2025') {
+        throw createHttpError(404, 'Job Not Found')
+      } else {
+        throw error
+      }
+    })
 }
 
 async function updateJobService (jobId: string, job: Job, organizationId: string): Promise<void> {
@@ -44,10 +47,17 @@ async function updateJobService (jobId: string, job: Job, organizationId: string
   }
 }
 
-async function deleteJobService (jobId: string, organizationId: string): Promise < void > {
+async function deleteJobService (jobId: string, organizationId: string): Promise <void> {
   const totalDelete = await deleteJob(jobId, organizationId)
   if (totalDelete.count === 0
   ) {
+    throw createHttpError(404, 'Data Not Found')
+  }
+}
+
+async function updateJobStatusService (jobId: string, jobStatus: string, organizationId: string): Promise<void> {
+  const totalUpdate = await updateJobStatus(jobId, organizationId, jobStatus.toUpperCase() as JobStatus)
+  if (totalUpdate.count === 0) {
     throw createHttpError(404, 'Data Not Found')
   }
 }
@@ -57,5 +67,6 @@ export {
   getJobByIdService,
   getAllJobService,
   updateJobService,
-  deleteJobService
+  deleteJobService,
+  updateJobStatusService
 }

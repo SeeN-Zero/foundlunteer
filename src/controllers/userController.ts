@@ -124,7 +124,7 @@ async function getUserIjazahController (req: Request, res: Response, next: NextF
       const { id } = req.user
       const finalId = await checkDownloadAuthorizationService(req.params.userId, id)
       const _dirname = dirname(fileURLToPath(import.meta.url))
-      const imagePath = path.join(_dirname, '../storage/Ijazah', finalId + '.pdf')
+      const imagePath = path.join(_dirname, '../storage/ijazah', finalId + '.pdf')
       res.download(imagePath, (error) => {
         if (error !== undefined) {
           res.status(404).json({ message: 'Ijazah Not Found' })

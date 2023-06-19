@@ -67,7 +67,9 @@ function uploadUserImageController (req: Request, res: Response, next: NextFunct
   if (req.user !== undefined) {
     const { id } = req.user
     uploadImage(req, res, function (error) {
-      if (error !== undefined) {
+      if (error.code === 'LIMIT_FILE_SIZE') {
+        next(createHttpError(400, error.message))
+      } else {
         next(error)
       }
       updateStatusImageService(id)

@@ -115,10 +115,15 @@ async function uploadIndividualFileController (req: Request, res: Response, next
     await isIndividualValidation(role)
     uploadFile(req, res, function (error): void {
       if (error !== undefined) {
-        next(error)
+        if (error.code === 'LIMIT_FILE_SIZE') {
+          next(createHttpError(400, error.message))
+        } else {
+          next(error)
+        }
+      } else {
+        updateStatusFileService(individualId)
+        res.status(200).json({ message: 'success' })
       }
-      updateStatusFileService(individualId)
-      res.status(200).json({ message: 'success' })
     })
   }
 }

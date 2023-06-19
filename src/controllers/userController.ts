@@ -1,13 +1,14 @@
 import createHttpError from 'http-errors'
 import {
   addUserService,
-  loginUserService,
-  getUserByEmailService,
-  getUserService,
-  sendEmailForgotPasswordService,
   changeForgotPasswordService,
   changePasswordService,
-  checkDownloadAuthorizationService, updateStatusImageService
+  checkDownloadAuthorizationService,
+  getUserByEmailService,
+  getUserService,
+  loginUserService,
+  sendEmailForgotPasswordService,
+  updateStatusImageService
 } from '../services/userService'
 import { fileURLToPath } from 'url'
 import path, { dirname } from 'path'
@@ -79,7 +80,12 @@ async function getUserImageController (req: Request, res: Response): Promise<voi
   if (req.user !== undefined) {
     const { id } = req.user
     const _dirname = dirname(fileURLToPath(import.meta.url))
-    const imagePath = path.join(_dirname, '../storage/image', id + '.png')
+    let imagePath
+    if (req.params.userId !== undefined) {
+      imagePath = path.join(_dirname, '../storage/image', req.params.userId + '.png')
+    } else {
+      imagePath = path.join(_dirname, '../storage/image', id + '.png')
+    }
     res.sendFile(imagePath, (error) => {
       if (error !== undefined) {
         res.status(404).json({ message: 'Image Not Found' })

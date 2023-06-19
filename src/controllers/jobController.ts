@@ -14,6 +14,7 @@ async function addJobController (req: Request, res: Response, next: NextFunction
     if (req.user !== undefined) {
       const { id: organizationId, role } = req.user
       await isOrganizationValidation(role)
+      req.body.expiredAt = new Date(req.body.expiredAt)
       await addJobService(req.body, organizationId)
       res.status(200).json({ message: 'success' })
     }

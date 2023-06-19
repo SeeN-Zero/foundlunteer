@@ -21,13 +21,7 @@ async function getAllJob (take: number | undefined, skip: number | undefined, fi
     orderBy: {
       createdAt: 'desc'
     },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      jobStatus: true,
-      createdAt: true,
-      organizationId: true,
+    include: {
       organization: {
         select: {
           user: {
@@ -52,13 +46,7 @@ async function getJobById (jobId: string): Promise<JobDto> {
     where: {
       id: jobId
     },
-    select: {
-      id: true,
-      title: true,
-      description: true,
-      jobStatus: true,
-      createdAt: true,
-      organizationId: true,
+    include: {
       organization: {
         select: {
           user: {

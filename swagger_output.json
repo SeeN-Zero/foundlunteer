@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.4.0",
+    "version": "2.5.0",
     "title": "FOUNDLUNTEER API",
     "description": "https://github.com/SeeN-Zero/foundlunteer"
   },
@@ -696,6 +696,9 @@
                 },
                 "description": {
                   "type": "string"
+                },
+                "social": {
+                  "type": "string"
                 }
               }
             }
@@ -1048,6 +1051,9 @@
                 },
                 "description": {
                   "type": "string"
+                },
+                "social": {
+                  "type": "string"
                 }
               }
             }
@@ -1248,7 +1254,7 @@
         "tags": [
           "Organization"
         ],
-        "summary": "Add Job By Organization",
+        "summary": "Add Job By Organization (Date Format YYYY-MM-DD)",
         "security": [
           {
             "bearerAuth": []
@@ -1269,13 +1275,21 @@
               "type": "object",
               "required": [
                 "title",
-                "description"
+                "description",
+                "location",
+                "expiredAt"
               ],
               "properties": {
                 "title": {
                   "type": "string"
                 },
                 "description": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "expiredAt": {
                   "type": "string"
                 }
               }
@@ -1324,7 +1338,7 @@
         "tags": [
           "Organization"
         ],
-        "summary": "Update Job By Organization",
+        "summary": "Update Job By Organization (Date Format YYYY-MM-DD)",
         "security": [
           {
             "bearerAuth": []
@@ -1352,13 +1366,21 @@
               "type": "object",
               "required": [
                 "title",
-                "description"
+                "description",
+                "location",
+                "expiredAt"
               ],
               "properties": {
                 "title": {
                   "type": "string"
                 },
                 "description": {
+                  "type": "string"
+                },
+                "location": {
+                  "type": "string"
+                },
+                "expiredAt": {
                   "type": "string"
                 }
               }

@@ -8,7 +8,7 @@ async function addJobService (job: Job, organizationId: string): Promise<void> {
   await addJob(job)
 }
 
-async function getAllJobService (query: any): Promise<{ jobs: JobDto[] }> {
+async function getAllJobService (query: any): Promise<any> {
   const { page, limit, filter } = query
   let skip: number | undefined
   let limitNum: number | undefined
@@ -22,20 +22,24 @@ async function getAllJobService (query: any): Promise<{ jobs: JobDto[] }> {
     skip = (parseInt(page) - 1) * parseInt(limit)
   }
   const allJob = await getAllJob(limitNum, skip, filter)
+  const allJobFinal = allJob.map(obj => ({ ...obj, image: 'https://aws.senna-annaba.my.id/user/getimage/' + obj.organizationId }))
   return {
-    jobs: allJob
+    jobs: allJobFinal
   }
 }
 
-async function getJobByIdService (jobId: string): Promise<JobDto> {
-  return getJobById(jobId)
-    .catch((error) => {
-      if (error.code === 'P2025') {
-        throw createHttpError(404, 'Job Not Found')
-      } else {
-        throw error
-      }
-    })
+async function getJobByIdService (jobId: string): Promise<any> {
+  const allJob = await getJobById(jobId).catch((error) => {
+    if (error.code === 'P2025') {
+      throw createHttpError(404, 'Job Not Found')
+    } else {
+      throw error
+    }
+  })
+  return {
+    ...allJob,
+    image: 'https://aws.senna-annaba.my.id/user/getimage/' + allJob.organizationId
+  }
 }
 
 async function updateJobService (jobId: string, job: Job, organizationId: string): Promise<void> {

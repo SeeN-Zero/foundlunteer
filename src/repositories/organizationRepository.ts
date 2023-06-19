@@ -54,13 +54,7 @@ async function getJob (organizationId: string): Promise<{ job: JobDto[] }> {
         orderBy: {
           createdAt: 'desc'
         },
-        select: {
-          id: true,
-          title: true,
-          description: true,
-          jobStatus: true,
-          createdAt: true,
-          organizationId: true,
+        include: {
           organization: {
             select: {
               user: {

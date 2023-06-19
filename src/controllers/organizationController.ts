@@ -38,7 +38,8 @@ async function updateOrganizationController (req: Request, res: Response, next: 
       }
       const organization = {
         leader: req.body.leader,
-        description: req.body.description
+        description: req.body.description,
+        social: req.body.social
       }
       await updateUserService(organizationId, user)
       await updateOrganizationService(organizationId, organization)

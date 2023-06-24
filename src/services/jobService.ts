@@ -8,7 +8,7 @@ async function addJobService (job: Job, organizationId: string): Promise<void> {
   await addJob(job)
 }
 
-async function getAllJobService (query: any): Promise<any> {
+async function getAllJobService (query: any, token: string): Promise<any> {
   const { page, limit, filter } = query
   let skip: number | undefined
   let limitNum: number | undefined
@@ -22,7 +22,7 @@ async function getAllJobService (query: any): Promise<any> {
     skip = (parseInt(page) - 1) * parseInt(limit)
   }
   const allJob = await getAllJob(limitNum, skip, filter)
-  const allJobFinal = allJob.map(obj => ({ ...obj, image: 'https://aws.senna-annaba.my.id/user/getimage/' + obj.organizationId }))
+  const allJobFinal = allJob.map(obj => ({ ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + obj.organizationId + '?token=' + encodeURI(token) }))
   return {
     jobs: allJobFinal
   }

@@ -29,7 +29,7 @@ async function addJobController (req: Request, res: Response, next: NextFunction
 
 async function getAllJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
-    const allJob = await getAllJobService(req.query)
+    const allJob = await getAllJobService(req.query, req.headers.authorization as string)
     res.status(200).json(allJob)
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {

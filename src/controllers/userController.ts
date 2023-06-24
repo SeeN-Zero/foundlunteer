@@ -67,13 +67,16 @@ function uploadUserImageController (req: Request, res: Response, next: NextFunct
   if (req.user !== undefined) {
     const { id } = req.user
     uploadImage(req, res, function (error) {
-      if (error.code === 'LIMIT_FILE_SIZE') {
-        next(createHttpError(400, error.message))
+      if (error !== undefined) {
+        if (error.code === 'LIMIT_FILE_SIZE') {
+          next(createHttpError(400, error.message))
+        } else {
+          next(error)
+        }
       } else {
-        next(error)
+        updateStatusImageService(id)
+        res.status(200).json({ message: 'success' })
       }
-      updateStatusImageService(id)
-      res.status(200).json({ message: 'success' })
     })
   }
 }
@@ -94,6 +97,16 @@ async function getUserImageController (req: Request, res: Response): Promise<voi
       }
     })
   }
+}
+
+async function getUserImageOrgController (req: Request, res: Response): Promise<void> {
+  const _dirname = dirname(fileURLToPath(import.meta.url))
+  const imagePath = path.join(_dirname, '../storage/image', req.params.userId + '.png')
+  res.sendFile(imagePath, (error) => {
+    if (error !== undefined) {
+      res.status(404).json({ message: 'Image Not Found' })
+    }
+  })
 }
 
 async function getUserCvController (req: Request, res: Response, next: NextFunction): Promise<void> {
@@ -220,5 +233,6 @@ export {
   getUserSertifikatController,
   sendCodeController,
   forgotPasswordController,
-  changePasswordController
+  changePasswordController,
+  getUserImageOrgController
 }

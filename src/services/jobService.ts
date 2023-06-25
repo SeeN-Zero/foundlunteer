@@ -1,7 +1,9 @@
 import { type Job, type JobStatus } from '@prisma/client'
 import { addJob, deleteJob, getAllJob, getJobById, updateJob, updateJobStatus } from '../repositories/jobRepository'
 import createHttpError from 'http-errors'
-import { type JobDto } from '../dto/jobDto'
+import path, { dirname } from 'path'
+import fs from 'fs'
+import { fileURLToPath } from 'url'
 
 async function addJobService (job: Job, organizationId: string): Promise<void> {
   job.organizationId = organizationId
@@ -22,13 +24,23 @@ async function getAllJobService (query: any, token: string): Promise<any> {
     skip = (parseInt(page) - 1) * parseInt(limit)
   }
   const allJob = await getAllJob(limitNum, skip, filter)
-  const allJobFinal = allJob.map(obj => ({ ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + obj.organizationId + '?token=' + encodeURI(token) }))
+  const _dirname = dirname(fileURLToPath(import.meta.url))
+  let filePathImage
+
+  const allJobFinal = allJob.map(obj => {
+    filePathImage = path.join(_dirname, '../storage/image', obj.organizationId + '.png')
+    if (fs.existsSync(filePathImage)) {
+      return { ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + obj.organizationId + '?token=' + encodeURI(token) }
+    } else {
+      return { ...obj, image: null }
+    }
+  })
   return {
     jobs: allJobFinal
   }
 }
 
-async function getJobByIdService (jobId: string): Promise<any> {
+async function getJobByIdService (jobId: string, token: string): Promise<any> {
   const allJob = await getJobById(jobId).catch((error) => {
     if (error.code === 'P2025') {
       throw createHttpError(404, 'Job Not Found')
@@ -38,7 +50,7 @@ async function getJobByIdService (jobId: string): Promise<any> {
   })
   return {
     ...allJob,
-    image: 'https://aws.senna-annaba.my.id/user/getimage/' + allJob.organizationId
+    image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + allJob.organizationId + '?token=' + encodeURI(token)
   }
 }
 

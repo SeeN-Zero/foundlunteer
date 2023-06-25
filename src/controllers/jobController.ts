@@ -43,7 +43,7 @@ async function getAllJobController (req: Request, res: Response, next: NextFunct
 async function getJobByIdController (req: Request, res: Response, next: NextFunction): Promise<any> {
   try {
     const { jobId } = req.params
-    const job = await getJobByIdService(jobId)
+    const job = await getJobByIdService(jobId, req.headers.authorization as string)
     res.status(200).json(job)
   } catch (error: any) {
     if (error.status === null || error.status === undefined) {

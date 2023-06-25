@@ -1,6 +1,7 @@
 import { type OrganizationDto, type RegisterantDto } from './userDto'
 
 interface JobDto {
+  image?: string | null
   id: string
   title: string
   description: string

@@ -87,8 +87,23 @@ async function registerIndividualToJobService (individualId: string, jobId: stri
   }
 }
 
-async function getIndividualRegisteredJobService (individualId: string): Promise<{ registered: RegisteredDto[] }> {
-  return getRegisteredJob(individualId)
+async function getIndividualRegisteredJobService (individualId: string, token: string): Promise<{ registered: RegisteredDto[] }> {
+  const registeredJob = await getRegisteredJob(individualId)
+  const _dirname = dirname(fileURLToPath(import.meta.url))
+  let filePathImage
+
+  const allregisteredJob = registeredJob.registered.map(obj => {
+    filePathImage = path.join(_dirname, '../storage/image', obj.job.organizationId + '.png')
+    if (fs.existsSync(filePathImage)) {
+      obj.job.image = 'https://aws.senna-annaba.my.id/user/getimageorg/' + obj.job.organizationId + '?token=' + encodeURI(token)
+      return obj
+    } else {
+      obj.job.image = null
+      return obj
+    }
+  })
+
+  return { registered: allregisteredJob }
 }
 
 function updateStatusFileService (individualId: string): void {

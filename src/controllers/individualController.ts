@@ -97,7 +97,7 @@ async function getIndividualRegisteredJobController (req: Request, res: Response
     if (req.user !== undefined) {
       const { id: individualId, role } = req.user
       await isIndividualValidation(role)
-      const result = await getIndividualRegisteredJobService(individualId)
+      const result = await getIndividualRegisteredJobService(individualId, req.headers.authorization as string)
       res.status(200).json(result)
     }
   } catch (error: any) {

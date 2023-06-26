@@ -24,7 +24,7 @@ async function updateIndividualController (req: Request, res: Response, next: Ne
         phone: req.body.phone
       }
       const individual = {
-        age: req.body.age,
+        birthOfDate: new Date(req.body.birthOfDate),
         description: req.body.description,
         social: req.body.social
       }

@@ -37,7 +37,7 @@ async function getJobDetailService (organizationId: string, jobId: string): Prom
 
 async function updateRegistrantStatusService (organizationId: string, jobId: string, individualId: string, regsitrantStatus: string): Promise<void> {
   const status = await getRegistrantStatus(organizationId, jobId, individualId)
-  if (status === RegistrationStatus.ONPROCESS) {
+  if (status[0].registrationStatus === RegistrationStatus.ONPROCESS) {
     await updateRegistrantStatus(organizationId, jobId, individualId, regsitrantStatus.toUpperCase() as RegistrationStatus)
       .catch((error) => {
         if (error.code === 'P2025') {

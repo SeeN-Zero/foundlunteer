@@ -12,7 +12,7 @@ interface UserDto {
 interface IndividualDto {
   id?: string
   user: UserDto
-  age: number | null
+  birthOfDate: Date | null
   description: string | null
   social: string | null
 }

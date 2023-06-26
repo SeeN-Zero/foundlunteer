@@ -11,7 +11,7 @@ async function addJobService (job: Job, organizationId: string): Promise<void> {
 }
 
 async function getAllJobService (query: any, token: string): Promise<any> {
-  const { page, limit, filter } = query
+  const { page, limit, title, location, organization } = query
   let skip: number | undefined
   let limitNum: number | undefined
   if (page !== undefined && limit === undefined) {
@@ -23,7 +23,7 @@ async function getAllJobService (query: any, token: string): Promise<any> {
     limitNum = parseInt(limit)
     skip = (parseInt(page) - 1) * parseInt(limit)
   }
-  const allJob = await getAllJob(limitNum, skip, filter)
+  const allJob = await getAllJob(limitNum, skip, title, location, organization)
   const _dirname = dirname(fileURLToPath(import.meta.url))
   let filePathImage
 

@@ -8,15 +8,30 @@ async function addJob (job: Job): Promise<void> {
     data: job
   })
 }
-async function getAllJob (take: number | undefined, skip: number | undefined, filter: string | undefined): Promise<JobDto[]> {
+async function getAllJob (take: number | undefined, skip: number | undefined, title: string | undefined, location: string | undefined, organization: string | undefined): Promise<JobDto[]> {
   return prisma.job.findMany({
     take,
     skip,
     where: {
-      title: {
-        contains: filter,
-        mode: 'insensitive'
+      AND: [{
+        title: {
+          contains: title,
+          mode: 'insensitive'
+        }
+      }, {
+        location: {
+          contains: location,
+          mode: 'insensitive'
+        }
+      }, {
+        organization: {
+          id: {
+            equals: organization
+          }
+        }
       }
+
+      ]
     },
     orderBy: {
       createdAt: 'desc'

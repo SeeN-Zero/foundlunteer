@@ -1,6 +1,6 @@
 {
   "name": "foundlunteer",
-  "version": "2.5.4",
+  "version": "2.5.6",
   "description": "Search for Volunteer App Service",
   "main": "./src/www.ts",
   "scripts": {

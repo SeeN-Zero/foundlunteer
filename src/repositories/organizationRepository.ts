@@ -108,7 +108,7 @@ async function getJobDetail (organizationId: string, jobId: string): Promise<Job
                   role: true
                 }
               },
-              age: true,
+              birthOfDate: true,
               description: true,
               social: true
             }

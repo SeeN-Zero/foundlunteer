@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.5.4",
+    "version": "2.5.6",
     "title": "FOUNDLUNTEER API",
     "description": "https://github.com/SeeN-Zero/foundlunteer"
   },
@@ -210,7 +210,7 @@
         "tags": [
           "User"
         ],
-        "summary": "Get All Job With Query Example : {/job/getall?limit=2&page=2&title=konser}",
+        "summary": "Get All Job With Query Example : {/job/getall?limit=2&page=2&title=konser&location=bali&organization=ea79881c-d3dd-4543-b64f-542e5b5d0148}",
         "produces": [
           "application/json"
         ],
@@ -232,6 +232,18 @@
             "name": "title",
             "type": "string",
             "description": "Search Job By Title"
+          },
+          {
+            "in": "query",
+            "name": "location",
+            "type": "string",
+            "description": "Search Job By Location"
+          },
+          {
+            "in": "query",
+            "name": "organization",
+            "type": "string",
+            "description": "Search Job By Organization Id"
           }
         ],
         "security": [
@@ -691,7 +703,7 @@
                 "phone": {
                   "type": "string"
                 },
-                "age": {
+                "birthOfDate": {
                   "type": "integer"
                 },
                 "description": {

@@ -38,7 +38,7 @@ model Token {
 model Individual {
   id          String         @unique
   user        User           @relation(name: "UserIndividual", fields: [id], references: [id])
-  age         Int?
+  birthOfDate DateTime?      @db.Date()
   description String?
   social      String?
   cv          Boolean?

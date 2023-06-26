@@ -34,7 +34,7 @@ async function getIndividualById (individualId: string): Promise<IndividualDto> 
           role: true
         }
       },
-      age: true,
+      birthOfDate: true,
       description: true,
       social: true
     }

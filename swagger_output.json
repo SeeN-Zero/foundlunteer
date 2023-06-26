@@ -690,7 +690,7 @@
           {
             "in": "body",
             "name": "Individual",
-            "description": "Add New Individual",
+            "description": "Update Individual",
             "schema": {
               "type": "object",
               "properties": {
@@ -704,7 +704,7 @@
                   "type": "string"
                 },
                 "birthOfDate": {
-                  "type": "integer"
+                  "type": "string"
                 },
                 "description": {
                   "type": "string"

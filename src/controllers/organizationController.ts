@@ -59,7 +59,7 @@ async function getJobDetailController (req: Request, res: Response, next: NextFu
     if (req.user !== undefined) {
       const { id: organizationId, role }: { id: string, role: Role } = req.user
       await isOrganizationValidation(role)
-      const detail = await getJobDetailService(organizationId, req.params.jobId)
+      const detail = await getJobDetailService(organizationId, req.params.jobId, req.headers.authorization as string)
       res.status(200).json(detail)
     }
   } catch (error: any) {

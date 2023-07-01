@@ -11,7 +11,7 @@ import {
   changePasswordController,
   getUserIjazahController,
   getUserSertifikatController,
-  getUserImageOrgController
+  getUserImageUserController
 } from '../controllers/userController'
 import { authentication, validateJwt } from '../middleware/authentication'
 import { validateChangePassword, validateForgotPassword, validateLogin, validateUser } from '../middleware/validation'
@@ -23,7 +23,7 @@ router.post('/login', validateLogin, loginUserController as RequestHandler)
 router.get('/get', authentication, getUserController as RequestHandler)
 router.post('/image', authentication, uploadUserImageController as RequestHandler)
 router.get('/getimage/:userId?', authentication, getUserImageController as RequestHandler)
-router.get('/getimageorg/:userId?', validateJwt, getUserImageOrgController as RequestHandler)
+router.get('/getimageuser/:userId?', validateJwt, getUserImageUserController as RequestHandler)
 router.get('/getcv/:userId?', authentication, getUserCvController as RequestHandler)
 router.get('/getijazah/:userId?', authentication, getUserIjazahController as RequestHandler)
 router.get('/getsertifikat/:userId?', authentication, getUserSertifikatController as RequestHandler)

@@ -99,7 +99,7 @@ async function getUserImageController (req: Request, res: Response): Promise<voi
   }
 }
 
-async function getUserImageOrgController (req: Request, res: Response): Promise<void> {
+async function getUserImageUserController (req: Request, res: Response): Promise<void> {
   const _dirname = dirname(fileURLToPath(import.meta.url))
   const imagePath = path.join(_dirname, '../storage/image', req.params.userId + '.png')
   res.sendFile(imagePath, (error) => {
@@ -234,5 +234,5 @@ export {
   sendCodeController,
   forgotPasswordController,
   changePasswordController,
-  getUserImageOrgController
+  getUserImageUserController
 }

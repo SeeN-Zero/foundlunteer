@@ -30,7 +30,7 @@ async function getAllJobService (query: any, token: string): Promise<any> {
   const allJobFinal = allJob.map(obj => {
     filePathImage = path.join(_dirname, '../storage/image', obj.organizationId + '.png')
     if (fs.existsSync(filePathImage)) {
-      return { ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + obj.organizationId + '?token=' + encodeURI(token) }
+      return { ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageuser/' + obj.organizationId + '?token=' + encodeURI(token) }
     } else {
       return { ...obj, image: null }
     }
@@ -50,7 +50,7 @@ async function getJobByIdService (jobId: string, token: string): Promise<any> {
   })
   return {
     ...allJob,
-    image: 'https://aws.senna-annaba.my.id/user/getimageorg/' + allJob.organizationId + '?token=' + encodeURI(token)
+    image: 'https://aws.senna-annaba.my.id/user/getimageuser/' + allJob.organizationId + '?token=' + encodeURI(token)
   }
 }
 

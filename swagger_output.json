@@ -1,7 +1,7 @@
 {
   "swagger": "2.0",
   "info": {
-    "version": "2.5.7",
+    "version": "2.5.8",
     "title": "FOUNDLUNTEER API",
     "description": "https://github.com/SeeN-Zero/foundlunteer"
   },

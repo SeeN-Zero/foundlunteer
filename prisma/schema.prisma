@@ -66,7 +66,7 @@ model Job {
   registrant     Registration[] @relation("JobOnRegistration")
   userList       UserList[]
   organizationId String
-  organization   Organization   @relation(name: "OrganizationOnJob", fields: [organizationId], references: [id])
+  organization   Organization   @relation(name: "OrganizationOnJob", fields: [organizationId], references: [id], onDelete: Cascade)
   createdAt      DateTime       @default(now())
   expiredAt      DateTime       @default(now())
 }
@@ -74,9 +74,9 @@ model Job {
 // Relation
 model Registration {
   individualId       String
-  individual         Individual         @relation(name: "IndividualOnRegistration", fields: [individualId], references: [id])
+  individual         Individual         @relation(name: "IndividualOnRegistration", fields: [individualId], references: [id], onDelete: Cascade)
   jobId              String
-  job                Job                @relation(name: "JobOnRegistration", fields: [jobId], references: [id])
+  job                Job                @relation(name: "JobOnRegistration", fields: [jobId], references: [id], onDelete: Cascade)
   registrationStatus RegistrationStatus
   registeredAt       DateTime           @default(now())
 

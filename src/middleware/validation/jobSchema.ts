@@ -11,7 +11,8 @@ const updateJobSchema = Joi.object({
   title: Joi.string().min(5),
   description: Joi.string(),
   location: Joi.string(),
-  expiredAt: Joi.date()
+  expiredAt: Joi.date(),
+  jobStatus: Joi.string().valid('OPEN', 'CLOSE').insensitive()
 })
 
 const updateJobStatusSchema = Joi.object({

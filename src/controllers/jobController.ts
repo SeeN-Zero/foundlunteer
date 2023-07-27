@@ -8,6 +8,7 @@ import {
   deleteJobService, updateJobStatusService
 } from '../services/jobService'
 import { type NextFunction, type Request, type Response } from 'express'
+import { type JobStatus } from '@prisma/client'
 
 async function addJobController (req: Request, res: Response, next: NextFunction): Promise<void> {
   try {
@@ -59,7 +60,12 @@ async function updateJobController (req: Request, res: Response, next: NextFunct
     if (req.user !== undefined) {
       const { id: organizationId, role } = req.user
       await isOrganizationValidation(role)
-      req.body.expiredAt = new Date(req.body.expiredAt)
+      if (req.body.expiredAt !== undefined) {
+        req.body.expiredAt = new Date(req.body.expiredAt)
+      }
+      if (req.body.jobStatus !== undefined) {
+        req.body.jobStatus = req.body.jobStatus.toUpperCase() as JobStatus
+      }
       await updateJobService(req.params.jobId, req.body, organizationId)
       res.status(200).json({ message: 'success' })
     }

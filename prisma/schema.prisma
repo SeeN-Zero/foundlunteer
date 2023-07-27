@@ -36,7 +36,7 @@ model Token {
 }
 
 model Individual {
-  id          String         @unique
+  id          String         @id @unique
   user        User           @relation(name: "UserIndividual", fields: [id], references: [id])
   birthOfDate DateTime?      @db.Date()
   description String?
@@ -49,7 +49,7 @@ model Individual {
 }
 
 model Organization {
-  id          String  @unique
+  id          String  @id @unique
   user        User    @relation(name: "UserOrganization", fields: [id], references: [id])
   leader      String?
   description String?

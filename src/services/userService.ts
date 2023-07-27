@@ -110,7 +110,7 @@ async function checkDownloadAuthorizationService (requestedId: string, requester
 }
 
 async function changePasswordService (id: string, newPassword: string): Promise<void> {
-  await updatePasswordUsingId(id, newPassword)
+  await updatePasswordUsingId(id, await encode(newPassword))
 }
 
 function updateStatusImageService (individualId: string): void {

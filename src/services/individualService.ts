@@ -95,7 +95,7 @@ async function getIndividualRegisteredJobService (individualId: string, token: s
   const allregisteredJob = registeredJob.registered.map(obj => {
     filePathImage = path.join(_dirname, '../storage/image', obj.job.organizationId + '.png')
     if (fs.existsSync(filePathImage)) {
-      obj.job.image = 'https://aws.senna-annaba.my.id/user/getimageuser/' + obj.job.organizationId + '?token=' + encodeURI(token)
+      obj.job.image = process.env.HOST_URL as string + '/user/getimageuser/' + obj.job.organizationId + '?token=' + encodeURI(token)
       return obj
     } else {
       obj.job.image = null

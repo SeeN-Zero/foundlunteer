@@ -1,8 +1,10 @@
 import { RegistrationStatus, Role } from '@prisma/client'
 import {
-  updateOrganization,
   getJob,
-  getJobDetail, updateRegistrantStatus, getRegistrantStatus
+  getJobDetail,
+  getRegistrantStatus,
+  updateOrganization,
+  updateRegistrantStatus
 } from '../repositories/organizationRepository'
 import createHttpError from 'http-errors'
 import { type JobDto, type JobRegistrantDto } from '../dto/jobDto'
@@ -40,11 +42,14 @@ async function getJobDetailService (organizationId: string, jobId: string, token
   const _dirname = dirname(fileURLToPath(import.meta.url))
   let filePathImage
 
-  const registrantWithImage = registrant.map(obj => {
+  job.registrant = registrant.map(obj => {
     if (obj.individual.id !== undefined) {
       filePathImage = path.join(_dirname, '../storage/image', obj.individual.id + '.png')
       if (fs.existsSync(filePathImage)) {
-        return { ...obj, image: 'https://aws.senna-annaba.my.id/user/getimageuser/' + obj.individual.id + '?token=' + encodeURI(token) }
+        return {
+          ...obj,
+          image: process.env.HOST_URL as string + '/user/getimageuser/' + obj.individual.id + '?token=' + encodeURI(token)
+        }
       } else {
         return { ...obj, image: null }
       }
@@ -52,7 +57,6 @@ async function getJobDetailService (organizationId: string, jobId: string, token
       return obj
     }
   })
-  job.registrant = registrantWithImage
   return job
 }
 

@@ -1,7 +1,7 @@
 import { addIndividual, getIndividualById } from '../repositories/individualRepository'
 import { addOrganization, getOrganizationById } from '../repositories/organizationRepository'
 import createHttpError from 'http-errors'
-import { Role, type User } from '@prisma/client'
+import { Role, type Prisma, type User } from '@prisma/client'
 import { sendEmail } from './Configuration/email'
 import { encode, compare } from './Configuration/passwordEncoder'
 import { generateJwt } from './Configuration/jwt'
@@ -21,7 +21,7 @@ import fs from 'fs'
 import { fileURLToPath } from 'url'
 import { type IndividualDto, type OrganizationDto } from '../dto/userDto'
 
-async function addUserService (user: User): Promise<void> {
+async function addUserService (user: Prisma.UserCreateInput): Promise<void> {
   user.password = await encode(user.password)
   if (user.role === Role.INDIVIDUAL) {
     await addIndividual(user)
@@ -44,7 +44,7 @@ async function addUserService (user: User): Promise<void> {
   }
 }
 
-async function loginUserService (user: User, login: { email: string, password: string }): Promise<{ token: string }> {
+async function loginUserService (user: User | null, login: { email: string, password: string }): Promise<{ token: string }> {
   if (user !== null) {
     await compare(login.password, user.password)
     const token = await generateJwt(user.id, user.role)
@@ -68,15 +68,15 @@ async function getUserService (id: string, role: Role): Promise<OrganizationDto 
   }
 }
 
-async function updateUserService (id: string, user: any): Promise<void> {
+async function updateUserService (id: string, user: Prisma.UserUpdateInput): Promise<void> {
   await updateUser(id, user)
 }
 
 async function sendEmailForgotPasswordService (targetMail: string): Promise<void> {
   const code = Math.floor(Math.random() * 9000 + 1000)
   // Expire after 30 minutes
-  const createdAt = new Date(Date.now()).toISOString()
-  const expiredAt = new Date(Date.now() + 0.5 * (60 * 60 * 1000)).toISOString()
+  const createdAt = new Date()
+  const expiredAt = new Date(Date.now() + 0.5 * (60 * 60 * 1000))
   await createCode(targetMail, code, createdAt, expiredAt)
   await sendEmail(targetMail, { code }, 'email.html', 'Foundlunteer Forgot Password')
 }
@@ -97,7 +97,7 @@ async function changeForgotPasswordService (email: string, code: number, passwor
   }
 }
 
-async function checkDownloadAuthorizationService (requestedId: string, requesterId: string): Promise<string> {
+async function checkDownloadAuthorizationService (requestedId: string | undefined, requesterId: string): Promise<string> {
   if (requestedId !== undefined && requestedId !== requesterId) {
     const idList = await getIndividualRegisteredOrganizationId(requestedId, requesterId)
     if (idList.length !== 0) {
@@ -113,7 +113,7 @@ async function changePasswordService (id: string, newPassword: string): Promise<
   await updatePasswordUsingId(id, await encode(newPassword))
 }
 
-function updateStatusImageService (individualId: string): void {
+async function updateStatusImageService (individualId: string): Promise<void> {
   const _dirname = dirname(fileURLToPath(import.meta.url))
   let image
   const filePathCv = path.join(_dirname, '../storage/image', individualId + '.png')
@@ -122,10 +122,7 @@ function updateStatusImageService (individualId: string): void {
   } else {
     image = null
   }
-  updateImageStatus(individualId, image)
-    .catch((e) => {
-      throw (e)
-    })
+  await updateImageStatus(individualId, image)
 }
 
 export {

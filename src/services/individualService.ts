@@ -1,4 +1,4 @@
-import { JobStatus, Role } from '@prisma/client'
+import { JobStatus, Role, type Prisma } from '@prisma/client'
 import createHttpError from 'http-errors'
 import {
   getIndividualById,
@@ -25,7 +25,7 @@ async function isIndividualValidation (role: string): Promise<void> {
   }
 }
 
-async function updateIndividualService (individualId: string, individual: any): Promise<void> {
+async function updateIndividualService (individualId: string, individual: Prisma.IndividualUpdateInput): Promise<void> {
   await updateIndividual(individualId, individual)
 }
 
@@ -55,7 +55,7 @@ async function saveOrDeleteJobService (individualId: string, jobId: string): Pro
 }
 
 async function getIndividualSavedJobService (individualId: string): Promise<{ jobs: JobDto[] }> {
-  return getIndividualSavedJob(individualId)
+  return await getIndividualSavedJob(individualId)
 }
 
 async function registerIndividualToJobService (individualId: string, jobId: string): Promise<void> {
@@ -88,6 +88,11 @@ async function registerIndividualToJobService (individualId: string, jobId: stri
 }
 
 async function getIndividualRegisteredJobService (individualId: string, token: string): Promise<{ registered: RegisteredDto[] }> {
+  const hostUrl = process.env.HOST_URL
+  if (hostUrl === undefined) {
+    throw createHttpError(500, 'HOST_URL is not configured')
+  }
+
   const registeredJob = await getRegisteredJob(individualId)
   const _dirname = dirname(fileURLToPath(import.meta.url))
   let filePathImage
@@ -95,7 +100,7 @@ async function getIndividualRegisteredJobService (individualId: string, token: s
   const allregisteredJob = registeredJob.registered.map(obj => {
     filePathImage = path.join(_dirname, '../storage/image', obj.job.organizationId + '.png')
     if (fs.existsSync(filePathImage)) {
-      obj.job.image = process.env.HOST_URL as string + '/user/getimageuser/' + obj.job.organizationId + '?token=' + encodeURI(token)
+      obj.job.image = hostUrl + '/user/getimageuser/' + obj.job.organizationId + '?token=' + encodeURI(token)
       return obj
     } else {
       obj.job.image = null
@@ -106,7 +111,7 @@ async function getIndividualRegisteredJobService (individualId: string, token: s
   return { registered: allregisteredJob }
 }
 
-function updateStatusFileService (individualId: string): void {
+async function updateStatusFileService (individualId: string): Promise<void> {
   const _dirname = dirname(fileURLToPath(import.meta.url))
   let cv, ijazah, sertifikat
   const filePathCv = path.join(_dirname, '../storage/cv', individualId + '.pdf')
@@ -127,10 +132,7 @@ function updateStatusFileService (individualId: string): void {
   } else {
     sertifikat = null
   }
-  updateFileStatus(individualId, cv, ijazah, sertifikat)
-    .catch((e) => {
-      throw (e)
-    })
+  await updateFileStatus(individualId, cv, ijazah, sertifikat)
 }
 
 async function getIndividualFileStatusService (individualId: string): Promise<FileStatusDto> {

@@ -1,3 +1,6 @@
+-- CreateSchema
+CREATE SCHEMA IF NOT EXISTS "public";
+
 -- CreateEnum
 CREATE TYPE "RegistrationStatus" AS ENUM ('ONPROCESS', 'REJECTED', 'ACCEPTED');
 
@@ -16,18 +19,35 @@ CREATE TABLE "User" (
     "address" TEXT NOT NULL,
     "phone" TEXT NOT NULL,
     "role" "Role" NOT NULL,
+    "image" BOOLEAN,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "User_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
+CREATE TABLE "Token" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "code" INTEGER NOT NULL,
+    "isValid" BOOLEAN NOT NULL DEFAULT true,
+    "createdAt" TIMESTAMP(3) NOT NULL,
+    "expireAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Token_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
 CREATE TABLE "Individual" (
     "id" TEXT NOT NULL,
-    "age" INTEGER,
+    "birthOfDate" DATE,
     "description" TEXT,
     "social" TEXT,
-    "userListId" TEXT
+    "cv" BOOLEAN,
+    "ijazah" BOOLEAN,
+    "sertifikat" BOOLEAN,
+
+    CONSTRAINT "Individual_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -35,7 +55,9 @@ CREATE TABLE "Organization" (
     "id" TEXT NOT NULL,
     "leader" TEXT,
     "description" TEXT,
-    "social" TEXT
+    "social" TEXT,
+
+    CONSTRAINT "Organization_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -43,9 +65,11 @@ CREATE TABLE "Job" (
     "id" TEXT NOT NULL,
     "title" TEXT NOT NULL,
     "description" TEXT NOT NULL,
+    "location" TEXT NOT NULL DEFAULT 'Jakarta',
     "jobStatus" "JobStatus" NOT NULL DEFAULT 'OPEN',
     "organizationId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "expiredAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "Job_pkey" PRIMARY KEY ("id")
 );
@@ -71,11 +95,16 @@ CREATE TABLE "UserList" (
 -- CreateTable
 CREATE TABLE "_JobToUserList" (
     "A" TEXT NOT NULL,
-    "B" TEXT NOT NULL
+    "B" TEXT NOT NULL,
+
+    CONSTRAINT "_JobToUserList_AB_pkey" PRIMARY KEY ("A","B")
 );
 
 -- CreateIndex
 CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "Token_email_key" ON "Token"("email");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Individual_id_key" ON "Individual"("id");
@@ -87,10 +116,10 @@ CREATE UNIQUE INDEX "Organization_id_key" ON "Organization"("id");
 CREATE UNIQUE INDEX "UserList_individualId_key" ON "UserList"("individualId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "_JobToUserList_AB_unique" ON "_JobToUserList"("A", "B");
-
--- CreateIndex
 CREATE INDEX "_JobToUserList_B_index" ON "_JobToUserList"("B");
+
+-- AddForeignKey
+ALTER TABLE "Token" ADD CONSTRAINT "Token_email_fkey" FOREIGN KEY ("email") REFERENCES "User"("email") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "Individual" ADD CONSTRAINT "Individual_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
@@ -99,13 +128,13 @@ ALTER TABLE "Individual" ADD CONSTRAINT "Individual_id_fkey" FOREIGN KEY ("id") 
 ALTER TABLE "Organization" ADD CONSTRAINT "Organization_id_fkey" FOREIGN KEY ("id") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Job" ADD CONSTRAINT "Job_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Job" ADD CONSTRAINT "Job_organizationId_fkey" FOREIGN KEY ("organizationId") REFERENCES "Organization"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Registration" ADD CONSTRAINT "Registration_individualId_fkey" FOREIGN KEY ("individualId") REFERENCES "Individual"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Registration" ADD CONSTRAINT "Registration_individualId_fkey" FOREIGN KEY ("individualId") REFERENCES "Individual"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
-ALTER TABLE "Registration" ADD CONSTRAINT "Registration_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Job"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+ALTER TABLE "Registration" ADD CONSTRAINT "Registration_jobId_fkey" FOREIGN KEY ("jobId") REFERENCES "Job"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "UserList" ADD CONSTRAINT "UserList_individualId_fkey" FOREIGN KEY ("individualId") REFERENCES "Individual"("id") ON DELETE RESTRICT ON UPDATE CASCADE;

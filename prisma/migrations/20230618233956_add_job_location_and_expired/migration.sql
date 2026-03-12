@@ -1,3 +1,0 @@
--- AlterTable
-ALTER TABLE "Job" ADD COLUMN     "expiredAt" TIMESTAMP(3) DEFAULT CURRENT_TIMESTAMP,
-ADD COLUMN     "location" TEXT NOT NULL DEFAULT 'Jakarta';

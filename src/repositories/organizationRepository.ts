@@ -1,10 +1,9 @@
-import { PrismaClient, type RegistrationStatus, type User } from '@prisma/client'
+import { type Prisma, type RegistrationStatus } from '@prisma/client'
 import { type OrganizationDto } from '../dto/userDto'
 import { type JobDto, type JobRegistrantDto } from '../dto/jobDto'
+import prisma from './prisma'
 
-const prisma = new PrismaClient()
-
-async function addOrganization (user: User): Promise<void> {
+async function addOrganization (user: Prisma.UserCreateInput): Promise<void> {
   await prisma.user.create({
     data: {
       ...user,
@@ -16,7 +15,7 @@ async function addOrganization (user: User): Promise<void> {
   })
 }
 async function getOrganizationById (organizationId: string): Promise<OrganizationDto> {
-  return prisma.organization.findUniqueOrThrow({
+  return await prisma.organization.findUniqueOrThrow({
     where: {
       id: organizationId
     },
@@ -36,7 +35,7 @@ async function getOrganizationById (organizationId: string): Promise<Organizatio
     }
   })
 }
-async function updateOrganization (id: string, organization: any): Promise<void> {
+async function updateOrganization (id: string, organization: Prisma.OrganizationUpdateInput): Promise<void> {
   await prisma.organization.update({
     where: {
       id
@@ -45,7 +44,7 @@ async function updateOrganization (id: string, organization: any): Promise<void>
   })
 }
 async function getJob (organizationId: string): Promise<{ job: JobDto[] }> {
-  return prisma.organization.findUniqueOrThrow({
+  return await prisma.organization.findUniqueOrThrow({
     where: {
       id: organizationId
     },
@@ -77,7 +76,7 @@ async function getJob (organizationId: string): Promise<{ job: JobDto[] }> {
   })
 }
 async function getJobDetail (organizationId: string, jobId: string): Promise<JobRegistrantDto> {
-  return prisma.job.findFirstOrThrow({
+  return await prisma.job.findFirstOrThrow({
     where: {
       AND: [
         {
@@ -118,14 +117,17 @@ async function getJobDetail (organizationId: string, jobId: string): Promise<Job
     }
   })
 }
-async function getRegistrantStatus (organizationId: string, jobId: string, individualId: string): Promise<any> {
-  return prisma.registration.findMany({
+async function getRegistrantStatus (organizationId: string, jobId: string, individualId: string): Promise<Array<{ registrationStatus: RegistrationStatus }>> {
+  return await prisma.registration.findMany({
     where: {
       jobId,
       job: {
         organizationId
       },
       individualId
+    },
+    select: {
+      registrationStatus: true
     }
   })
 }

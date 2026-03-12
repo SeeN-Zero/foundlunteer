@@ -1,9 +1,9 @@
-import { PrismaClient, RegistrationStatus, type User } from '@prisma/client'
+import { type Prisma, RegistrationStatus } from '@prisma/client'
 import { type FileStatusDto, type IndividualDto, type RegisteredDto } from '../dto/userDto'
 import { type JobDto } from '../dto/jobDto'
+import prisma from './prisma'
 
-const prisma = new PrismaClient()
-async function addIndividual (user: User): Promise<void> {
+async function addIndividual (user: Prisma.UserCreateInput): Promise<void> {
   await prisma.user.create({
     data: {
       ...user,
@@ -20,7 +20,7 @@ async function addIndividual (user: User): Promise<void> {
   })
 }
 async function getIndividualById (individualId: string): Promise<IndividualDto> {
-  return prisma.individual.findUniqueOrThrow({
+  return await prisma.individual.findUniqueOrThrow({
     where: {
       id: individualId
     },
@@ -40,7 +40,7 @@ async function getIndividualById (individualId: string): Promise<IndividualDto> 
     }
   })
 }
-async function updateIndividual (id: string, individual: any): Promise<void> {
+async function updateIndividual (id: string, individual: Prisma.IndividualUpdateInput): Promise<void> {
   await prisma.individual.update({
     where: {
       id
@@ -69,7 +69,7 @@ async function deleteJob (individualId: string, jobId: string): Promise<void> {
   })
 }
 async function checkSavedJob (individualId: string, jobId: string): Promise<number> {
-  return prisma.userList.count({
+  return await prisma.userList.count({
     where: {
       AND: [
         {
@@ -88,7 +88,7 @@ async function checkSavedJob (individualId: string, jobId: string): Promise<numb
   })
 }
 async function getIndividualSavedJob (individualId: string): Promise<{ jobs: JobDto[] }> {
-  return prisma.userList.findUniqueOrThrow({
+  return await prisma.userList.findUniqueOrThrow({
     where: {
       individualId
     },
@@ -134,7 +134,7 @@ async function registerJob (individualId: string, jobId: string): Promise<void> 
   })
 }
 async function getRegisteredJob (individualId: string): Promise<{ registered: RegisteredDto[] }> {
-  return prisma.individual.findUniqueOrThrow({
+  return await prisma.individual.findUniqueOrThrow({
     where: {
       id: individualId
     },
@@ -180,7 +180,7 @@ async function updateFileStatus (individualId: string, cv: boolean | null, ijaza
   })
 }
 async function getIndividualFileStatus (individualId: string): Promise<FileStatusDto> {
-  return prisma.individual.findUniqueOrThrow({
+  return await prisma.individual.findUniqueOrThrow({
     where: {
       id: individualId
     },

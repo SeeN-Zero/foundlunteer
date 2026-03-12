@@ -1,4 +1,4 @@
-import { RegistrationStatus, Role } from '@prisma/client'
+import { RegistrationStatus, Role, type Prisma } from '@prisma/client'
 import {
   getJob,
   getJobDetail,
@@ -25,11 +25,16 @@ async function getOrganizationJobByIdService (id: string): Promise<{ jobs: JobDt
   }
 }
 
-async function updateOrganizationService (id: string, organization: any): Promise<void> {
+async function updateOrganizationService (id: string, organization: Prisma.OrganizationUpdateInput): Promise<void> {
   await updateOrganization(id, organization)
 }
 
 async function getJobDetailService (organizationId: string, jobId: string, token: string): Promise<JobRegistrantDto> {
+  const hostUrl = process.env.HOST_URL
+  if (hostUrl === undefined) {
+    throw createHttpError(500, 'HOST_URL is not configured')
+  }
+
   const job = await getJobDetail(organizationId, jobId)
     .catch((error) => {
       if (error.code === 'P2025') {
@@ -48,7 +53,7 @@ async function getJobDetailService (organizationId: string, jobId: string, token
       if (fs.existsSync(filePathImage)) {
         return {
           ...obj,
-          image: process.env.HOST_URL as string + '/user/getimageuser/' + obj.individual.id + '?token=' + encodeURI(token)
+          image: hostUrl + '/user/getimageuser/' + obj.individual.id + '?token=' + encodeURI(token)
         }
       } else {
         return { ...obj, image: null }
@@ -60,10 +65,19 @@ async function getJobDetailService (organizationId: string, jobId: string, token
   return job
 }
 
-async function updateRegistrantStatusService (organizationId: string, jobId: string, individualId: string, regsitrantStatus: string): Promise<void> {
+async function updateRegistrantStatusService (organizationId: string, jobId: string, individualId: string, registrantStatus: string): Promise<void> {
+  const normalizedStatus = registrantStatus.toUpperCase() as RegistrationStatus
+  if (!Object.values(RegistrationStatus).includes(normalizedStatus)) {
+    throw createHttpError(400, 'Invalid registrant status')
+  }
+
   const status = await getRegistrantStatus(organizationId, jobId, individualId)
+  if (status.length === 0) {
+    throw createHttpError(404, 'Registrant not found')
+  }
+
   if (status[0].registrationStatus === RegistrationStatus.ONPROCESS) {
-    await updateRegistrantStatus(organizationId, jobId, individualId, regsitrantStatus.toUpperCase() as RegistrationStatus)
+    await updateRegistrantStatus(organizationId, jobId, individualId, normalizedStatus)
       .catch((error) => {
         if (error.code === 'P2025') {
           throw createHttpError(404, 'Not Found')

@@ -5,7 +5,7 @@ const addUserSchema = Joi.object({
   password: Joi.string().min(7).required(),
   name: Joi.string().min(3).max(64).required(),
   address: Joi.string().min(10).max(100).required(),
-  phone: Joi.string().min(10).max(12).regex(/^\d+$/).required(),
+  phone: Joi.string().min(10).max(12).pattern(/^\d+$/).required(),
   role: Joi.string().valid('individual', 'organization').insensitive().required()
 })
 

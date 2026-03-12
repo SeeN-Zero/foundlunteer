@@ -1,22 +1,21 @@
-import { type User, PrismaClient, type Token } from '@prisma/client'
-
-const prisma = new PrismaClient()
+import { type Prisma, type Token, type User } from '@prisma/client'
+import prisma from './prisma'
 async function getUserByEmail (email: string): Promise<User | null> {
-  return prisma.user.findUnique({
+  return await prisma.user.findUnique({
     where: {
       email
     }
   })
 }
-async function updateUser (id: string, data: any): Promise<any> {
-  return prisma.user.update({
+async function updateUser (id: string, data: Prisma.UserUpdateInput): Promise<User> {
+  return await prisma.user.update({
     where: {
       id
     },
     data
   })
 }
-async function createCode (email: string, code: number, createdAt: any, expireAt: any): Promise<void> {
+async function createCode (email: string, code: number, createdAt: Date, expireAt: Date): Promise<void> {
   await prisma.token.upsert({
     where: { email },
     update: {
@@ -47,7 +46,7 @@ async function updateCode (email: string): Promise<void> {
   })
 }
 async function getCode (email: string): Promise<Token | null> {
-  return prisma.token.findUnique({
+  return await prisma.token.findUnique({
     where: { email }
   })
 }
@@ -63,13 +62,17 @@ async function updatePasswordUsingId (id: string, password: string): Promise<voi
     data: { password }
   })
 }
-async function getIndividualRegisteredOrganizationId (individualId: string, organizationId: string): Promise<any> {
-  return prisma.registration.findMany({
+async function getIndividualRegisteredOrganizationId (individualId: string, organizationId: string): Promise<Array<{ individualId: string, jobId: string }>> {
+  return await prisma.registration.findMany({
     where: {
       individualId,
       job: {
         organizationId
       }
+    },
+    select: {
+      individualId: true,
+      jobId: true
     }
   })
 }
